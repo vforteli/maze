@@ -16,9 +16,8 @@ body {
 }
 
 .wrapper {
+  max-width: 600px; /* eh.. just for testing.. */
   border-radius: 8px;
   width: var(--table-width);
-  /* height: 80vh; */
-  /* overflow: auto; */
   box-shadow: 2px 2px 15px 0px rgba(0, 0, 0, 0.5);
 }

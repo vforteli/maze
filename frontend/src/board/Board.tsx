@@ -1,6 +1,6 @@
 import "./Board.scss";
 import React from "react";
-import { CellMemoized, CellProps, directions } from "./Cell";
+import { CellMemoized, CellProps, directions, ICell, LCell, TCell } from "./Cell";
 import { getRandomInteger, shuffleArray } from "../utils";
 import { fixedCells, movableCells } from "./Cells";
 
@@ -31,9 +31,20 @@ const Board = () => {
   console.debug(playerCell);
 
   return (
-    <div>
-      <div style={{ width: 100, margin: 20 }}>
-        <CellMemoized {...playerCell} />
+    <div className="board-container">
+      <div className="tile-test">
+        <div style={{ width: 100, margin: 20 }}>
+          <CellMemoized {...playerCell} />
+        </div>
+        <div style={{ width: 100, margin: 20 }}>
+          <CellMemoized openings={TCell} rotation={0} />
+        </div>
+        <div style={{ width: 100, margin: 20 }}>
+          <CellMemoized openings={LCell} rotation={0} />
+        </div>
+        <div style={{ width: 100, margin: 20 }}>
+          <CellMemoized openings={ICell} rotation={0} />
+        </div>
       </div>
       <div className="board">
         {cells.map((o, i) => (

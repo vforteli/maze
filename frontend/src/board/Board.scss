@@ -1,5 +1,12 @@
-.board {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-gap: 3px;
+.board-container {
+  .tile-test {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 3px;
+  }
 }
