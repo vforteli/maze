@@ -11,6 +11,7 @@
   }
   .cell {
     background-color: chocolate;
+    border: 2px solid lighten(chocolate, 15);
     border-radius: 6px;
     aspect-ratio: 1;
 
