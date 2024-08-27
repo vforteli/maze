@@ -1,0 +1,24 @@
+:root {
+  --table-width: 80vw;
+  --backgrond: rgb(21, 31, 40);
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--backgrond);  
+}
+
+.container {
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper {
+  border-radius: 8px;
+  width: var(--table-width);
+  height: 80vh;
+  overflow: auto;
+  box-shadow: 2px 2px 15px 0px rgba(0, 0, 0, 0.5);
+}

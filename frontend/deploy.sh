@@ -1,0 +1,1 @@
+az storage blob upload-batch --account-name blerp -d '$web' -s ./dist/ --overwrite 
