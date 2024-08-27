@@ -1,0 +1,25 @@
+.cell-container {
+  position: relative;
+
+  .content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+  }
+  .cell {
+    background-color: chocolate;
+    border-radius: 6px;
+    aspect-ratio: 1;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+
+    .road {
+      background-color: antiquewhite;
+    }
+  }
+}

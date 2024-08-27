@@ -1,0 +1,101 @@
+import { CellProps, ICell, LCell, TCell } from "./Cell";
+import { StartingCellMemoized } from "./StartingCell";
+
+export const fixedCells: readonly (CellProps | undefined)[] = [
+  { openings: LCell, rotation: 90, content: <StartingCellMemoized color="green" /> },
+  undefined,
+  { openings: TCell, rotation: 180 },
+  undefined,
+  { openings: TCell, rotation: 180 },
+  undefined,
+  { openings: LCell, rotation: 180, content: <StartingCellMemoized color="red" /> },
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  { openings: TCell, rotation: 90 },
+  undefined,
+  { openings: TCell, rotation: 90 },
+  undefined,
+  { openings: TCell, rotation: 180 },
+  undefined,
+  { openings: TCell, rotation: 270 },
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  { openings: TCell, rotation: 90 },
+  undefined,
+  { openings: TCell, rotation: 0 },
+  undefined,
+  { openings: TCell, rotation: 270 },
+  undefined,
+  { openings: TCell, rotation: 270 },
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  { openings: LCell, rotation: 0, content: <StartingCellMemoized color="blue" /> },
+  undefined,
+  { openings: TCell, rotation: 0 },
+  undefined,
+  { openings: TCell, rotation: 0 },
+  undefined,
+  { openings: LCell, rotation: 270, content: <StartingCellMemoized color="yellow" /> },
+];
+
+export const movableCells: readonly (Omit<CellProps, "rotation"> | undefined)[] = [
+  { openings: TCell },
+  { openings: TCell },
+  { openings: TCell },
+  { openings: TCell },
+  { openings: TCell },
+  { openings: TCell },
+
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+  { openings: ICell },
+
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+  { openings: LCell },
+];
+
+/*
+
+6 * T
+16 * fixed
+11 * I
+16 * L
+
+*/
