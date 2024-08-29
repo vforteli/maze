@@ -1,26 +1,26 @@
-import "./Cell.scss";
+import "./Tile.scss";
 import React, { ReactNode } from "react";
 
 export const directions = [0, 90, 180, 270] as const;
 export type Direction = (typeof directions)[number];
 
-export const LCell: Direction[] = [0, 90];
-export const TCell: Direction[] = [0, 90, 270];
-export const ICell: Direction[] = [90, 270];
+export const LTile: Direction[] = [0, 90];
+export const TTile: Direction[] = [0, 90, 270];
+export const ITile: Direction[] = [90, 270];
 
-export type CellType = "T" | "L" | "I";
+export type TileType = "T" | "L" | "I";
 
-export type CellProps = {
-  type: CellType;
+export type TileProps = {
+  type: TileType;
   rotation: Direction;
   content?: ReactNode | undefined;
 };
 
-const Cell = (props: CellProps) => {
+const Tile = (props: TileProps) => {
   return (
-    <div className="cell-container">
+    <div className="tile-container">
       <div className="content">{props.content}</div>
-      <div className="cell" style={{ transform: `rotate(${props.rotation}deg)` }}>
+      <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
         {props.type === "T" && (
           <>
             <div className="top-left" />
@@ -46,4 +46,4 @@ const Cell = (props: CellProps) => {
   );
 };
 
-export const CellMemoized = React.memo(Cell);
+export const TileMemoized = React.memo(Tile);

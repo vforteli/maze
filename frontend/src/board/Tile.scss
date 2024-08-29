@@ -1,4 +1,4 @@
-.cell-container {
+.tile-container {
   position: relative;
 
   .content {
@@ -10,7 +10,7 @@
     z-index: 10;
   }
 
-  .cell {
+  .tile {
     transition: transform 0.5s ease-in-out;
     overflow: hidden;
     background-color: antiquewhite;

@@ -1,13 +1,7 @@
-.starting-cell {
+.item-tile {
   height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  .circle {
-    border-radius: 50%;
-    height: 30%;
-    width: 30%;
-  }
 }
