@@ -7,8 +7,9 @@ export type Direction = (typeof directions)[number];
 export const LTile: Direction[] = [0, 90];
 export const TTile: Direction[] = [0, 90, 270];
 export const ITile: Direction[] = [90, 270];
+export const XTile: Direction[] = [0, 90, 180, 270];
 
-export type TileType = "T" | "L" | "I";
+export type TileType = "T" | "L" | "I" | "X";
 
 export type TileProps = {
   type: TileType;
@@ -42,6 +43,15 @@ const TileBackground = ({ type }: { type: TileType }) => {
         <div className="l-1" />
         <div className="l-2" />
         <div className="l-3" />
+      </>
+    );
+  } else if (type === "X") {
+    return (
+      <>
+        <div className="top-left" />
+        <div className="top-right" />
+        <div className="bottom-left" />
+        <div className="bottom-right" />
       </>
     );
   } else {

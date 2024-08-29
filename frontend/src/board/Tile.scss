@@ -36,6 +36,20 @@
       border-bottom-left-radius: 6px;
     }
 
+    .bottom-left {
+      background-color: chocolate;
+      grid-column: 1;
+      grid-row: 3;
+      border-top-right-radius: 6px;
+    }
+
+    .bottom-right {
+      background-color: chocolate;
+      grid-column: 3;
+      grid-row: 3;
+      border-top-left-radius: 6px;
+    }
+
     .top {
       background-color: chocolate;
       grid-row: 1;

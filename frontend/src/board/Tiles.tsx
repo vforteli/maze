@@ -79,9 +79,9 @@ export const movableTiles: readonly Omit<TileProps, "rotation">[] = [
   { type: "I" },
   { type: "I" },
   { type: "I" },
-  { type: "I" },
-  { type: "I" },
-  { type: "I" },
+  { type: "X" },
+  { type: "X" },
+  { type: "X" },
 
   { type: "L", content: <ItemTileMemoized item="lizzard" /> },
   { type: "L", content: <ItemTileMemoized item="owl" /> },
