@@ -1,15 +1,15 @@
 import "./Board.scss";
 import React, { useState } from "react";
 import { TileMemoized } from "./Tile";
-import { getRandomBoardTiles, moveRowTiles, rotatePlayerTile } from "./BoardUtils";
+import { getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./BoardUtils";
 
 export type BoardProps = unknown;
 
 const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
 
-  const moveRow = (direction: "left" | "right") => {
-    const updatedBoard = moveRowTiles(boardState, 1, direction);
+  const handleMoveTiles = (direction: MoveDirection) => {
+    const updatedBoard = moveTiles(boardState, 1, direction);
     setBoardState(updatedBoard);
   };
 
@@ -19,8 +19,11 @@ const Board = () => {
 
   return (
     <div className="board-container">
-      <button onClick={() => moveRow("left")}>Move row left</button>
-      <button onClick={() => moveRow("right")}>Move row right</button>
+      <button onClick={() => handleMoveTiles("left")}>Move row left</button>
+      <button onClick={() => handleMoveTiles("right")}>Move row right</button>
+      <button onClick={() => handleMoveTiles("up")}>Move column up</button>
+      <button onClick={() => handleMoveTiles("down")}>Move column down</button>
+
       <div className="tile-test">
         <div style={{ width: 100, margin: 20 }}>
           <div className="player-tile" onClick={() => handleRotatePlayerTile()}>

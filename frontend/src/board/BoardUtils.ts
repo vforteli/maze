@@ -9,7 +9,13 @@ export type BoardState = {
   playerTile: TileProps;
 };
 
-export function moveRowTiles(board: BoardState, rowIndex: number, direction: "left" | "right"): BoardState {
+export type MoveDirection = "left" | "right" | "up" | "down";
+
+export function moveTiles(board: Readonly<BoardState>, index: number, direction: MoveDirection) {
+  return direction === "left" || direction === "right" ? moveRowTilesX(board, index, direction) : moveRowTilesY(board, index, direction);
+}
+
+function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
   const updatedTiles = [...board.tiles];
   const row = board.tiles[rowIndex];
   const updatedRow = [...row];
@@ -26,6 +32,32 @@ export function moveRowTiles(board: BoardState, rowIndex: number, direction: "le
     updatedTiles[rowIndex] = updatedRow;
 
     return { ...board, playerTile: playerTile!, tiles: updatedTiles };
+  }
+}
+
+function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, direction: "up" | "down"): BoardState {
+  const updatedTiles = board.tiles.map((row) => [...row]);
+
+  if (direction === "down") {
+    const lastItem = updatedTiles[updatedTiles.length - 1][columnIndex];
+
+    for (let rowIndex = updatedTiles.length - 1; rowIndex > 0; rowIndex--) {
+      updatedTiles[rowIndex][columnIndex] = updatedTiles[rowIndex - 1][columnIndex];
+    }
+
+    updatedTiles[0][columnIndex] = board.playerTile;
+
+    return { ...board, tiles: updatedTiles, playerTile: lastItem };
+  } else {
+    const firstItem = updatedTiles[0][columnIndex];
+
+    for (let rowIndex = 0; rowIndex < updatedTiles.length - 1; rowIndex++) {
+      updatedTiles[rowIndex][columnIndex] = updatedTiles[rowIndex + 1][columnIndex];
+    }
+
+    updatedTiles[updatedTiles.length - 1][columnIndex] = board.playerTile;
+
+    return { ...board, tiles: updatedTiles, playerTile: firstItem };
   }
 }
 
@@ -64,7 +96,7 @@ export function rotatePlayerTile(board: BoardState): BoardState {
   return { ...board, playerTile: { ...board.playerTile, rotation: rotateRight(board.playerTile.rotation) } };
 }
 
-export function rotateRight(direction: Direction): Direction {
+function rotateRight(direction: Direction): Direction {
   switch (direction) {
     case 0:
       return 90;
