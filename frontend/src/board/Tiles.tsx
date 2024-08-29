@@ -1,20 +1,21 @@
 import { TileProps } from "./Tile";
 import { ItemTileMemoized } from "./ItemTile";
 import { StartingTileMemoized } from "./StartingTile";
+import { BunnyIcon, CowIcon, CrabIcon, CrocodileIcon, MooseIcon, RaccoonIcon, WildBoarIcon } from "../assets/Icons";
 
 export const things = [
-  "genie",
-  "ring",
-  "map",
-  "ghost",
+  "cow",
+  "wildboar",
+  "raccoon",
+  "squirrel",
   "rat",
   "dragon",
-  "troll",
+  "bunny",
   "candles",
   "chest",
   "crown",
   "book",
-  "lizzard",
+  "crocodile",
   "bat",
   "owl",
   "moth",
@@ -22,8 +23,8 @@ export const things = [
   "armor",
   "emerald",
   "keys",
-  "moneysack",
-  "elf",
+  "crab",
+  "moose",
   "scarab",
   "sword",
   "skull",
@@ -36,13 +37,24 @@ export type FixedTileCoordinates = {
   y: number;
 };
 
+export const ThingIcons: Partial<Record<Thing, React.ReactElement>> = {
+  crocodile: <CrocodileIcon />,
+  bunny: <BunnyIcon />,
+  cow: <CowIcon />,
+  moose: <MooseIcon />,
+  wildboar: <WildBoarIcon />,
+  raccoon: <RaccoonIcon />,
+  // squirrel: <SquirrelIcon />,
+  crab: <CrabIcon />,
+};
+
 /**
  * These are the fixes tiles which cannot be moved
  */
 export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
   { type: "L", rotation: 90, content: <StartingTileMemoized color="green" />, x: 0, y: 0 },
-  { type: "T", rotation: 180, content: <ItemTileMemoized item="genie" />, x: 2, y: 0 },
-  { type: "T", rotation: 180, content: <ItemTileMemoized item="map" />, x: 4, y: 0 },
+  { type: "T", rotation: 180, content: <ItemTileMemoized item="cow" />, x: 2, y: 0 },
+  { type: "T", rotation: 180, content: <ItemTileMemoized item="raccoon" />, x: 4, y: 0 },
   { type: "L", rotation: 180, content: <StartingTileMemoized color="red" />, x: 6, y: 0 },
   { type: "T", rotation: 90, content: <ItemTileMemoized item="candles" />, x: 0, y: 2 },
   { type: "T", rotation: 90, content: <ItemTileMemoized item="chest" />, x: 2, y: 2 },
@@ -51,7 +63,7 @@ export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
   { type: "T", rotation: 90, content: <ItemTileMemoized item="armor" />, x: 0, y: 4 },
   { type: "T", rotation: 0, content: <ItemTileMemoized item="emerald" />, x: 2, y: 4 },
   { type: "T", rotation: 270, content: <ItemTileMemoized item="keys" />, x: 4, y: 4 },
-  { type: "T", rotation: 270, content: <ItemTileMemoized item="moneysack" />, x: 6, y: 4 },
+  { type: "T", rotation: 270, content: <ItemTileMemoized item="crab" />, x: 6, y: 4 },
   { type: "L", rotation: 0, content: <StartingTileMemoized color="blue" />, x: 0, y: 6 },
   { type: "T", rotation: 0, content: <ItemTileMemoized item="sword" />, x: 2, y: 6 },
   { type: "T", rotation: 0, content: <ItemTileMemoized item="skull" />, x: 4, y: 6 },
@@ -63,12 +75,12 @@ export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
  * Note that one is left out for the player
  */
 export const movableTiles: readonly Omit<TileProps, "rotation">[] = [
-  { type: "T", content: <ItemTileMemoized item="ring" /> },
-  { type: "T", content: <ItemTileMemoized item="ghost" /> },
+  { type: "T", content: <ItemTileMemoized item="wildboar" /> },
+  { type: "T", content: <ItemTileMemoized item="squirrel" /> },
   { type: "T", content: <ItemTileMemoized item="dragon" /> },
   { type: "T", content: <ItemTileMemoized item="bat" /> },
-  { type: "T", content: <ItemTileMemoized item="elf" /> },
-  { type: "T" },
+  { type: "T", content: <ItemTileMemoized item="moose" /> },
+  { type: "T", content: <ItemTileMemoized item="bunny" /> },
   { type: "T" }, // hmm is this the correct one? count them...
 
   { type: "I" },
@@ -83,7 +95,7 @@ export const movableTiles: readonly Omit<TileProps, "rotation">[] = [
   { type: "X" },
   { type: "X" },
 
-  { type: "L", content: <ItemTileMemoized item="lizzard" /> },
+  { type: "L", content: <ItemTileMemoized item="crocodile" /> },
   { type: "L", content: <ItemTileMemoized item="owl" /> },
   { type: "L", content: <ItemTileMemoized item="moth" /> },
   { type: "L", content: <ItemTileMemoized item="spider" /> },
