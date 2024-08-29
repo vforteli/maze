@@ -62,7 +62,7 @@ export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
  * All the other tiles which can me moved and rotated
  * Note that one is left out for the player
  */
-export const movableTiles: readonly (Omit<TileProps, "rotation"> | undefined)[] = [
+export const movableTiles: readonly Omit<TileProps, "rotation">[] = [
   { type: "T", content: <ItemTileMemoized item="ring" /> },
   { type: "T", content: <ItemTileMemoized item="ghost" /> },
   { type: "T", content: <ItemTileMemoized item="dragon" /> },

@@ -9,21 +9,25 @@ const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
 
   const handleMoveTiles = (index: number, direction: MoveDirection) => {
-    const updatedBoard = moveTiles(boardState, index, direction);
-    setBoardState(updatedBoard);
+    setBoardState(moveTiles(boardState, index, direction));
   };
 
   const handleRotatePlayerTile = () => {
     setBoardState((s) => rotatePlayerTile(s));
   };
 
-  function FrameTile(props: { onClick: () => void }) {
+  const FrameTile = (props: { onClick: () => void }) => {
     return (
       <div className="player-tile movable" onClick={props.onClick}>
         <TileMemoized {...boardState.playerTile} rotation={boardState.playerTile.rotation} />
       </div>
     );
-  }
+  };
+
+  const Edge = ({ direction }: { direction: MoveDirection }) => {
+    const count = direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length;
+    return [...Array(count).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, direction)} /> : <div />));
+  };
 
   return (
     <div className="board-container">
@@ -36,16 +40,16 @@ const Board = () => {
       </div>
       <div className="board-frame">
         <div className="frame-side left">
-          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "right")} /> : <div />))}
+          <Edge direction="right" />
         </div>
         <div className="frame-side right">
-          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "left")} /> : <div />))}
+          <Edge direction="left" />
         </div>
         <div className="frame-side top">
-          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "down")} /> : <div />))}
+          <Edge direction="down" />
         </div>
         <div className="frame-side bottom">
-          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "up")} /> : <div />))}
+          <Edge direction="up" />
         </div>
         <div className="board">
           {boardState.tiles

@@ -18,32 +18,40 @@ export type TileProps = {
 
 const Tile = (props: TileProps) => {
   return (
-    <div className="tile-container">
+    <div className="tile-container" style={{ transform: `translateX(00px)`, transition: "transform 0.5s ease" }}>
       <div className="content">{props.content}</div>
       <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
-        {props.type === "T" && (
-          <>
-            <div className="top-left" />
-            <div className="top-right" />
-            <div className="bottom" />
-          </>
-        )}
-        {props.type === "L" && (
-          <>
-            <div className="l-1" />
-            <div className="l-2" />
-            <div className="l-3" />
-          </>
-        )}
-        {props.type === "I" && (
-          <>
-            <div className="top" />
-            <div className="bottom" />
-          </>
-        )}
+        <TileBackground type={props.type} />
       </div>
     </div>
   );
+};
+
+const TileBackground = ({ type }: { type: TileType }) => {
+  if (type === "T") {
+    return (
+      <>
+        <div className="top-left" />
+        <div className="top-right" />
+        <div className="bottom" />
+      </>
+    );
+  } else if (type === "L") {
+    return (
+      <>
+        <div className="l-1" />
+        <div className="l-2" />
+        <div className="l-3" />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className="top" />
+        <div className="bottom" />
+      </>
+    );
+  }
 };
 
 export const TileMemoized = React.memo(Tile);
