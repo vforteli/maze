@@ -8,8 +8,8 @@ export type BoardProps = unknown;
 const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
 
-  const handleMoveTiles = (direction: MoveDirection) => {
-    const updatedBoard = moveTiles(boardState, 1, direction);
+  const handleMoveTiles = (index: number, direction: MoveDirection) => {
+    const updatedBoard = moveTiles(boardState, index, direction);
     setBoardState(updatedBoard);
   };
 
@@ -17,30 +17,36 @@ const Board = () => {
     setBoardState((s) => rotatePlayerTile(s));
   };
 
+  function FrameTile(props: { onClick: () => void }) {
+    return (
+      <div className="player-tile movable" onClick={props.onClick}>
+        <TileMemoized {...boardState.playerTile} rotation={boardState.playerTile.rotation} />
+      </div>
+    );
+  }
+
   return (
     <div className="board-container">
-      <button onClick={() => handleMoveTiles("left")}>Move row left</button>
-      <button onClick={() => handleMoveTiles("right")}>Move row right</button>
-      <button onClick={() => handleMoveTiles("up")}>Move column up</button>
-      <button onClick={() => handleMoveTiles("down")}>Move column down</button>
-
       <div className="tile-test">
         <div style={{ width: 100, margin: 20 }}>
           <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
             <TileMemoized {...boardState.playerTile} rotation={boardState.playerTile.rotation} />
           </div>
         </div>
-        <div style={{ width: 100, margin: 20 }}>
-          <TileMemoized type="T" rotation={0} />
-        </div>
-        <div style={{ width: 100, margin: 20 }}>
-          <TileMemoized type="L" rotation={0} />
-        </div>
-        <div style={{ width: 100, margin: 20 }}>
-          <TileMemoized type="I" rotation={0} />
-        </div>
       </div>
       <div className="board-frame">
+        <div className="frame-side left">
+          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "right")} /> : <div />))}
+        </div>
+        <div className="frame-side right">
+          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "left")} /> : <div />))}
+        </div>
+        <div className="frame-side top">
+          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "down")} /> : <div />))}
+        </div>
+        <div className="frame-side bottom">
+          {[...Array(boardState.tiles.length).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, "up")} /> : <div />))}
+        </div>
         <div className="board">
           {boardState.tiles
             .flatMap((o) => o)
