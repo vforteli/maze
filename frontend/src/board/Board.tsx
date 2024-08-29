@@ -9,7 +9,7 @@ const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
 
   const handleMoveTiles = (index: number, direction: MoveDirection) => {
-    setBoardState(moveTiles(boardState, index, direction));
+    setBoardState((b) => moveTiles(b, index, direction));
   };
 
   const handleRotatePlayerTile = () => {

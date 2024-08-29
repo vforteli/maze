@@ -6,5 +6,7 @@ import WildBoarIcon from "./cards/wild-boar-svgrepo-com.svg?react";
 import SquirrelIcon from "./cards/squirrel-svgrepo-com.svg?react";
 import RaccoonIcon from "./cards/raccoon-svgrepo-com.svg?react";
 import CrabIcon from "./cards/crab-svgrepo-com.svg?react";
+import FoxIcon from "./cards/fox-svgrepo-com.svg?react";
+import WhaleIcon from "./cards/whale-svgrepo-com.svg?react";
 
-export { CowIcon, BunnyIcon, CrocodileIcon, MooseIcon, WildBoarIcon, SquirrelIcon, RaccoonIcon, CrabIcon };
+export { CowIcon, BunnyIcon, CrocodileIcon, MooseIcon, WildBoarIcon, SquirrelIcon, RaccoonIcon, CrabIcon, FoxIcon, WhaleIcon };

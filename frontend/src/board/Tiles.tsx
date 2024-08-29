@@ -1,7 +1,7 @@
 import { TileProps } from "./Tile";
 import { ItemTileMemoized } from "./ItemTile";
 import { StartingTileMemoized } from "./StartingTile";
-import { BunnyIcon, CowIcon, CrabIcon, CrocodileIcon, MooseIcon, RaccoonIcon, WildBoarIcon } from "../assets/Icons";
+import { BunnyIcon, CowIcon, CrabIcon, CrocodileIcon, FoxIcon, MooseIcon, RaccoonIcon, SquirrelIcon, WhaleIcon, WildBoarIcon } from "../assets/Icons";
 
 export const things = [
   "cow",
@@ -11,7 +11,7 @@ export const things = [
   "rat",
   "dragon",
   "bunny",
-  "candles",
+  "fox",
   "chest",
   "crown",
   "book",
@@ -20,7 +20,7 @@ export const things = [
   "owl",
   "moth",
   "spider",
-  "armor",
+  "whale",
   "emerald",
   "keys",
   "crab",
@@ -38,14 +38,30 @@ export type FixedTileCoordinates = {
 };
 
 export const ThingIcons: Partial<Record<Thing, React.ReactElement>> = {
-  crocodile: <CrocodileIcon />,
-  bunny: <BunnyIcon />,
-  cow: <CowIcon />,
-  moose: <MooseIcon />,
-  wildboar: <WildBoarIcon />,
-  raccoon: <RaccoonIcon />,
-  // squirrel: <SquirrelIcon />,
-  crab: <CrabIcon />,
+  crocodile: <CrocodileIcon width={70} height={70} />,
+  bunny: <BunnyIcon width={70} height={70} />,
+  cow: <CowIcon width={70} height={70} />,
+  moose: <MooseIcon width={70} height={70} />,
+  wildboar: <WildBoarIcon width={70} height={70} />,
+  raccoon: <RaccoonIcon width={70} height={70} />,
+  squirrel: <SquirrelIcon width={70} height={70} />,
+  crab: <CrabIcon width={70} height={70} />,
+  fox: <FoxIcon width={70} height={70} />,
+  whale: <WhaleIcon width={70} height={70} />,
+  // rat: undefined,
+  // dragon: undefined,
+  // chest: undefined,
+  // crown: undefined,
+  // book: undefined,
+  // bat: undefined,
+  // owl: undefined,
+  // moth: undefined,
+  // spider: undefined,
+  // emerald: undefined,
+  // keys: undefined,
+  // scarab: undefined,
+  // sword: undefined,
+  // skull: undefined
 };
 
 /**
@@ -56,11 +72,11 @@ export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
   { type: "T", rotation: 180, content: <ItemTileMemoized item="cow" />, x: 2, y: 0 },
   { type: "T", rotation: 180, content: <ItemTileMemoized item="raccoon" />, x: 4, y: 0 },
   { type: "L", rotation: 180, content: <StartingTileMemoized color="red" />, x: 6, y: 0 },
-  { type: "T", rotation: 90, content: <ItemTileMemoized item="candles" />, x: 0, y: 2 },
+  { type: "T", rotation: 90, content: <ItemTileMemoized item="fox" />, x: 0, y: 2 },
   { type: "T", rotation: 90, content: <ItemTileMemoized item="chest" />, x: 2, y: 2 },
   { type: "T", rotation: 180, content: <ItemTileMemoized item="crown" />, x: 4, y: 2 },
   { type: "T", rotation: 270, content: <ItemTileMemoized item="book" />, x: 6, y: 2 },
-  { type: "T", rotation: 90, content: <ItemTileMemoized item="armor" />, x: 0, y: 4 },
+  { type: "T", rotation: 90, content: <ItemTileMemoized item="whale" />, x: 0, y: 4 },
   { type: "T", rotation: 0, content: <ItemTileMemoized item="emerald" />, x: 2, y: 4 },
   { type: "T", rotation: 270, content: <ItemTileMemoized item="keys" />, x: 4, y: 4 },
   { type: "T", rotation: 270, content: <ItemTileMemoized item="crab" />, x: 6, y: 4 },
