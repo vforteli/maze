@@ -5,7 +5,7 @@ import { getRandomInteger, shuffleArray } from "../utils";
 import { fixedTiles, movableTiles } from "./Tiles";
 
 export type BoardState = {
-  tiles: TileProps[];
+  tiles: readonly TileProps[][];
   playerTile: TileProps;
 };
 
@@ -13,23 +13,34 @@ export type BoardProps = unknown;
 const BoardSize = 7;
 
 function getRandomBoardTiles(): BoardState {
-  const randomTiles = shuffleArray(movableTiles);
+  const height = BoardSize;
+  const width = BoardSize;
 
-  const tiles = fixedTiles.map((o) => {
-    if (o !== undefined) {
-      return o;
-    } else {
-      const randomTile = randomTiles.pop();
+  if (fixedTiles.length + movableTiles.length !== height * width + 1) {
+    throw new Error("Board size and tile count doesnt add up :/");
+  }
 
-      if (randomTile === undefined) {
-        throw new Error("uh, i guess something is screwed up with the board dimensions?");
+  const shuffledMovableTiles = shuffleArray(movableTiles);
+
+  const rows = [...Array(height).keys()].map((rowIndex) =>
+    [...Array(width).keys()].map((columnIndex) => {
+      // get a fixed tile if one exists for coordinates, or pick one of the random tiles
+      const fixedTile = fixedTiles.find((o) => o?.x === columnIndex && o.y === rowIndex);
+      if (fixedTile !== undefined) {
+        return fixedTile;
+      } else {
+        const randomTile = shuffledMovableTiles.pop();
+
+        if (randomTile === undefined) {
+          throw new Error("uh, i guess something is screwed up with the board dimensions?");
+        }
+
+        return { ...randomTile, rotation: directions[getRandomInteger(0, 3)] };
       }
+    }),
+  );
 
-      return { ...randomTile, rotation: directions[getRandomInteger(0, 3)] };
-    }
-  });
-
-  return { tiles: tiles, playerTile: { ...randomTiles.pop()!, rotation: 0 } };
+  return { tiles: rows, playerTile: { ...shuffledMovableTiles.pop()!, rotation: 0 } };
 }
 
 function rotateRight(direction: Direction): Direction {
@@ -69,9 +80,11 @@ const Board = () => {
       </div>
       <div className="board-frame">
         <div className="board">
-          {tiles.map((o, i) => (
-            <TileMemoized key={i} {...o} />
-          ))}
+          {tiles
+            .flatMap((o) => o)
+            .map((o, i) => (
+              <TileMemoized key={i} {...o} />
+            ))}
         </div>
       </div>
     </div>

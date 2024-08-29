@@ -31,59 +31,31 @@ export const things = [
 
 export type Thing = (typeof things)[number];
 
+export type FixedTileCoordinates = {
+  x: number;
+  y: number;
+};
+
 /**
  * These are the fixes tiles which cannot be moved
  */
-export const fixedTiles: readonly (TileProps | undefined)[] = [
-  { type: "L", rotation: 90, content: <StartingTileMemoized color="green" /> },
-  undefined,
-  { type: "T", rotation: 180, content: <ItemTileMemoized item="genie" /> },
-  undefined,
-  { type: "T", rotation: 180, content: <ItemTileMemoized item="map" /> },
-  undefined,
-  { type: "L", rotation: 180, content: <StartingTileMemoized color="red" /> },
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  { type: "T", rotation: 90, content: <ItemTileMemoized item="candles" /> },
-  undefined,
-  { type: "T", rotation: 90, content: <ItemTileMemoized item="chest" /> },
-  undefined,
-  { type: "T", rotation: 180, content: <ItemTileMemoized item="crown" /> },
-  undefined,
-  { type: "T", rotation: 270, content: <ItemTileMemoized item="book" /> },
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  { type: "T", rotation: 90, content: <ItemTileMemoized item="armor" /> },
-  undefined,
-  { type: "T", rotation: 0, content: <ItemTileMemoized item="emerald" /> },
-  undefined,
-  { type: "T", rotation: 270, content: <ItemTileMemoized item="keys" /> },
-  undefined,
-  { type: "T", rotation: 270, content: <ItemTileMemoized item="moneysack" /> },
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  { type: "L", rotation: 0, content: <StartingTileMemoized color="blue" /> },
-  undefined,
-  { type: "T", rotation: 0, content: <ItemTileMemoized item="sword" /> },
-  undefined,
-  { type: "T", rotation: 0, content: <ItemTileMemoized item="skull" /> },
-  undefined,
-  { type: "L", rotation: 270, content: <StartingTileMemoized color="yellow" /> },
+export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
+  { type: "L", rotation: 90, content: <StartingTileMemoized color="green" />, x: 0, y: 0 },
+  { type: "T", rotation: 180, content: <ItemTileMemoized item="genie" />, x: 2, y: 0 },
+  { type: "T", rotation: 180, content: <ItemTileMemoized item="map" />, x: 4, y: 0 },
+  { type: "L", rotation: 180, content: <StartingTileMemoized color="red" />, x: 6, y: 0 },
+  { type: "T", rotation: 90, content: <ItemTileMemoized item="candles" />, x: 0, y: 2 },
+  { type: "T", rotation: 90, content: <ItemTileMemoized item="chest" />, x: 2, y: 2 },
+  { type: "T", rotation: 180, content: <ItemTileMemoized item="crown" />, x: 4, y: 2 },
+  { type: "T", rotation: 270, content: <ItemTileMemoized item="book" />, x: 6, y: 2 },
+  { type: "T", rotation: 90, content: <ItemTileMemoized item="armor" />, x: 0, y: 4 },
+  { type: "T", rotation: 0, content: <ItemTileMemoized item="emerald" />, x: 2, y: 4 },
+  { type: "T", rotation: 270, content: <ItemTileMemoized item="keys" />, x: 4, y: 4 },
+  { type: "T", rotation: 270, content: <ItemTileMemoized item="moneysack" />, x: 6, y: 4 },
+  { type: "L", rotation: 0, content: <StartingTileMemoized color="blue" />, x: 0, y: 6 },
+  { type: "T", rotation: 0, content: <ItemTileMemoized item="sword" />, x: 2, y: 6 },
+  { type: "T", rotation: 0, content: <ItemTileMemoized item="skull" />, x: 4, y: 6 },
+  { type: "L", rotation: 270, content: <StartingTileMemoized color="yellow" />, x: 6, y: 6 },
 ];
 
 /**
