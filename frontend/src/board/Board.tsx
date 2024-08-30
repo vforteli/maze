@@ -9,7 +9,7 @@ const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
 
   const handleMoveTiles = (index: number, direction: MoveDirection) => {
-    setBoardState(moveTiles(boardState, index, direction));
+    setBoardState((b) => moveTiles(b, index, direction));
   };
 
   const handleRotatePlayerTile = () => {
@@ -26,7 +26,7 @@ const Board = () => {
 
   const Edge = ({ direction }: { direction: MoveDirection }) => {
     const count = direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length;
-    return [...Array(count).keys()].map((i) => (i % 2 !== 0 ? <FrameTile onClick={() => handleMoveTiles(i, direction)} /> : <div />));
+    return [...Array(count).keys()].map((i) => (i % 2 !== 0 ? <FrameTile key={i} onClick={() => handleMoveTiles(i, direction)} /> : <div key={i} />));
   };
 
   return (

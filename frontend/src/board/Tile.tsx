@@ -4,10 +4,12 @@ import React, { ReactNode } from "react";
 export const directions = [0, 90, 180, 270] as const;
 export type Direction = (typeof directions)[number];
 
-export const LTile: Direction[] = [0, 90];
-export const TTile: Direction[] = [0, 90, 270];
-export const ITile: Direction[] = [90, 270];
-export const XTile: Direction[] = [0, 90, 180, 270];
+export const TileTypes: Record<TileType, Direction[]> = {
+  T: [0, 90, 270],
+  L: [0, 90],
+  I: [90, 270],
+  X: [0, 90, 180, 270], // yeap, this is not according to specs :D
+};
 
 export type TileType = "T" | "L" | "I" | "X";
 
@@ -19,7 +21,7 @@ export type TileProps = {
 
 const Tile = (props: TileProps) => {
   return (
-    <div className="tile-container" style={{ transform: `translateX(00px)`, transition: "transform 0.5s ease" }}>
+    <div className="tile-container">
       <div className="content">{props.content}</div>
       <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
         <TileBackground type={props.type} />
