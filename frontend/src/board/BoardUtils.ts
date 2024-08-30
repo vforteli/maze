@@ -1,13 +1,13 @@
 import { shuffleArray, getRandomInteger } from "../utils";
-import { TileProps } from "./Tile";
+import { KeyedTileProps } from "./Tile";
 import { fixedTiles, movableTiles } from "./Tiles";
 import { directions, Direction } from "./TileTypes";
 
 const BoardSize = 7;
 
 export type BoardState = {
-  tiles: readonly TileProps[][];
-  playerTile: TileProps;
+  tiles: readonly KeyedTileProps[][];
+  playerTile: KeyedTileProps;
 };
 
 export type MoveDirection = "left" | "right" | "up" | "down";
@@ -72,12 +72,14 @@ export function getRandomBoardTiles(): BoardState {
 
   const shuffledMovableTiles = shuffleArray(movableTiles);
 
+  let id = 0;
+
   const rows = [...Array(height).keys()].map((rowIndex) =>
     [...Array(width).keys()].map((columnIndex) => {
       // get a fixed tile if one exists for coordinates, or pick one of the random tiles
       const fixedTile = fixedTiles.find((o) => o?.x === columnIndex && o.y === rowIndex);
       if (fixedTile !== undefined) {
-        return fixedTile;
+        return { ...fixedTile, id: id++ };
       } else {
         const randomTile = shuffledMovableTiles.pop();
 
@@ -85,12 +87,12 @@ export function getRandomBoardTiles(): BoardState {
           throw new Error("uh, i guess something is screwed up with the board dimensions?");
         }
 
-        return { ...randomTile, rotation: directions[getRandomInteger(0, 3)] };
+        return { ...randomTile, rotation: directions[getRandomInteger(0, 3)], id: id++ };
       }
     }),
   );
 
-  return { tiles: rows, playerTile: { ...shuffledMovableTiles.pop()!, rotation: 0 } };
+  return { tiles: rows, playerTile: { ...shuffledMovableTiles.pop()!, rotation: 0, id: id++ } };
 }
 
 export function rotatePlayerTile(board: BoardState): BoardState {

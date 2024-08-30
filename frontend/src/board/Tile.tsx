@@ -8,16 +8,18 @@ export type TileProps = {
   content?: ReactNode | undefined;
 };
 
-const Tile = (props: TileProps) => {
-  return (
-    <div className="tile-container">
-      <div className="content">{props.content}</div>
-      <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
-        <TileBackground type={props.type} />
-      </div>
-    </div>
-  );
+export type KeyedTileProps = TileProps & {
+  id: number;
 };
+
+const Tile = (props: TileProps) => (
+  <div className="tile-container">
+    <div className="content">{props.content}</div>
+    <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
+      <TileBackground type={props.type} />
+    </div>
+  </div>
+);
 
 const TileBackground = ({ type }: { type: TileType }) => {
   if (type === "T") {

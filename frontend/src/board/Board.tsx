@@ -1,11 +1,11 @@
 import "./Board.scss";
 import React, { useCallback, useState } from "react";
-import { TileMemoized, TileProps } from "./Tile";
+import { KeyedTileProps, TileMemoized } from "./Tile";
 import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./BoardUtils";
 
-const EdgeTile = (props: { playerTile: TileProps; onClick: () => void }) => (
+const EdgeTile = (props: { playerTile: KeyedTileProps; onClick: () => void }) => (
   <div className="player-tile movable" onClick={props.onClick}>
-    <TileMemoized {...props.playerTile} />
+    <TileMemoized {...props.playerTile} key={props.playerTile.id} />
   </div>
 );
 
@@ -46,7 +46,7 @@ const Board = () => {
     <div className="board-container">
       <div style={{ width: 100, margin: 20 }}>
         <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
-          <TileMemoized {...boardState.playerTile} />
+          <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
         </div>
       </div>
       <div className="board-frame">
