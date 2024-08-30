@@ -1,6 +1,7 @@
 import { shuffleArray, getRandomInteger } from "../utils";
-import { TileProps, directions, Direction } from "./Tile";
+import { TileProps } from "./Tile";
 import { fixedTiles, movableTiles } from "./Tiles";
+import { directions, Direction } from "./TileTypes";
 
 const BoardSize = 7;
 
