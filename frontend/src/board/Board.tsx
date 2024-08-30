@@ -44,11 +44,9 @@ const Board = () => {
 
   return (
     <div className="board-container">
-      <div className="tile-test">
-        <div style={{ width: 100, margin: 20 }}>
-          <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
-            <TileMemoized {...boardState.playerTile} rotation={boardState.playerTile.rotation} />
-          </div>
+      <div style={{ width: 100, margin: 20 }}>
+        <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
+          <TileMemoized {...boardState.playerTile} />
         </div>
       </div>
       <div className="board-frame">
@@ -56,13 +54,8 @@ const Board = () => {
         <Edge className="frame-side right" direction="left" boardState={boardState} onClick={(i) => handleMoveTiles(i, "left")} />
         <Edge className="frame-side top" direction="down" boardState={boardState} onClick={(i) => handleMoveTiles(i, "down")} />
         <Edge className="frame-side bottom" direction="up" boardState={boardState} onClick={(i) => handleMoveTiles(i, "up")} />
-
         <div className="board">
-          {boardState.tiles
-            .flatMap((o) => o)
-            .map((o, i) => (
-              <TileMemoized key={i} {...o} />
-            ))}
+          {boardState.tiles.flatMap((o, rowIndex) => o.map((o, columnIndex) => <TileMemoized key={`${columnIndex}_${rowIndex}`} {...o} />))}
         </div>
       </div>
     </div>
