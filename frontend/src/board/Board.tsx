@@ -2,6 +2,7 @@ import "./Board.scss";
 import React, { useCallback, useState } from "react";
 import { KeyedTileProps, TileMemoized } from "./tiles/Tile";
 import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
+import { CardMemoized } from "./cards/Card";
 
 const EdgeTile = (props: { playerTile: KeyedTileProps; onClick: () => void }) => (
   <div className="player-tile movable" onClick={props.onClick}>
@@ -48,6 +49,12 @@ const Board = () => {
         <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
           <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
         </div>
+      </div>
+
+      <div className="card-stack">
+        <CardMemoized item="bunny" />
+        <CardMemoized item="cow" />
+        <CardMemoized item="trex" />
       </div>
 
       <div className="board-frame">
