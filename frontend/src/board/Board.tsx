@@ -1,7 +1,7 @@
 import "./Board.scss";
 import React, { useCallback, useState } from "react";
 import { KeyedTileProps, TileMemoized } from "./tiles/Tile";
-import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./BoardUtils";
+import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
 
 const EdgeTile = (props: { playerTile: KeyedTileProps; onClick: () => void }) => (
   <div className="player-tile movable" onClick={props.onClick}>

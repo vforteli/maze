@@ -99,7 +99,7 @@ export function rotatePlayerTile(board: BoardState): BoardState {
   return { ...board, playerTile: { ...board.playerTile, rotation: rotateRight(board.playerTile.rotation) } };
 }
 
-function rotateRight(direction: Direction): Direction {
+export function rotateRight(direction: Direction): Direction {
   switch (direction) {
     case 0:
       return 90;

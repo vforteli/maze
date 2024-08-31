@@ -1,0 +1,253 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`moveTiles > moveDown 1`] = `
+{
+  "playerTile": {
+    "id": 8,
+    "rotation": 0,
+    "type": "L",
+  },
+  "tiles": [
+    [
+      {
+        "id": 1,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 0,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 3,
+        "rotation": 0,
+        "type": "T",
+      },
+    ],
+    [
+      {
+        "id": 4,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 2,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 6,
+        "rotation": 0,
+        "type": "I",
+      },
+    ],
+    [
+      {
+        "id": 7,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 5,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 9,
+        "rotation": 0,
+        "type": "L",
+      },
+    ],
+  ],
+}
+`;
+
+exports[`moveTiles > moveLeft 1`] = `
+{
+  "playerTile": {
+    "id": 4,
+    "rotation": 0,
+    "type": "I",
+  },
+  "tiles": [
+    [
+      {
+        "id": 1,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 2,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 3,
+        "rotation": 0,
+        "type": "T",
+      },
+    ],
+    [
+      {
+        "id": 5,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 6,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 0,
+        "rotation": 180,
+        "type": "L",
+      },
+    ],
+    [
+      {
+        "id": 7,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 8,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 9,
+        "rotation": 0,
+        "type": "L",
+      },
+    ],
+  ],
+}
+`;
+
+exports[`moveTiles > moveRight 1`] = `
+{
+  "playerTile": {
+    "id": 6,
+    "rotation": 0,
+    "type": "I",
+  },
+  "tiles": [
+    [
+      {
+        "id": 1,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 2,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 3,
+        "rotation": 0,
+        "type": "T",
+      },
+    ],
+    [
+      {
+        "id": 0,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 4,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 5,
+        "rotation": 0,
+        "type": "I",
+      },
+    ],
+    [
+      {
+        "id": 7,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 8,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 9,
+        "rotation": 0,
+        "type": "L",
+      },
+    ],
+  ],
+}
+`;
+
+exports[`moveTiles > moveUp 1`] = `
+{
+  "playerTile": {
+    "id": 2,
+    "rotation": 0,
+    "type": "T",
+  },
+  "tiles": [
+    [
+      {
+        "id": 1,
+        "rotation": 0,
+        "type": "T",
+      },
+      {
+        "id": 5,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 3,
+        "rotation": 0,
+        "type": "T",
+      },
+    ],
+    [
+      {
+        "id": 4,
+        "rotation": 0,
+        "type": "I",
+      },
+      {
+        "id": 8,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 6,
+        "rotation": 0,
+        "type": "I",
+      },
+    ],
+    [
+      {
+        "id": 7,
+        "rotation": 0,
+        "type": "L",
+      },
+      {
+        "id": 0,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 9,
+        "rotation": 0,
+        "type": "L",
+      },
+    ],
+  ],
+}
+`;
