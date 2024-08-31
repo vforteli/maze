@@ -1,5 +1,392 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`getRandomBoardTiles > get board 1`] = `
+{
+  "playerTile": {
+    "content": <Memo(ItemTile)
+      item="wildboar"
+    />,
+    "id": 49,
+    "rotation": 0,
+    "type": "T",
+  },
+  "tiles": [
+    [
+      {
+        "content": <Memo(StartingTile)
+          color="green"
+        />,
+        "id": 0,
+        "rotation": 90,
+        "type": "L",
+        "x": 0,
+        "y": 0,
+      },
+      {
+        "id": 1,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="cow"
+        />,
+        "id": 2,
+        "rotation": 180,
+        "type": "T",
+        "x": 2,
+        "y": 0,
+      },
+      {
+        "id": 3,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="raccoon"
+        />,
+        "id": 4,
+        "rotation": 180,
+        "type": "T",
+        "x": 4,
+        "y": 0,
+      },
+      {
+        "id": 5,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(StartingTile)
+          color="red"
+        />,
+        "id": 6,
+        "rotation": 180,
+        "type": "L",
+        "x": 6,
+        "y": 0,
+      },
+    ],
+    [
+      {
+        "id": 7,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 8,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 9,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 10,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 11,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 12,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="bat"
+        />,
+        "id": 13,
+        "rotation": 180,
+        "type": "L",
+      },
+    ],
+    [
+      {
+        "content": <Memo(ItemTile)
+          item="fox"
+        />,
+        "id": 14,
+        "rotation": 90,
+        "type": "T",
+        "x": 0,
+        "y": 2,
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="polarbear"
+        />,
+        "id": 15,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="hedgehog"
+        />,
+        "id": 16,
+        "rotation": 90,
+        "type": "T",
+        "x": 2,
+        "y": 2,
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="spider"
+        />,
+        "id": 17,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="penguin"
+        />,
+        "id": 18,
+        "rotation": 180,
+        "type": "T",
+        "x": 4,
+        "y": 2,
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="frog"
+        />,
+        "id": 19,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="shrimp"
+        />,
+        "id": 20,
+        "rotation": 270,
+        "type": "T",
+        "x": 6,
+        "y": 2,
+      },
+    ],
+    [
+      {
+        "content": <Memo(ItemTile)
+          item="lion"
+        />,
+        "id": 21,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="crocodile"
+        />,
+        "id": 22,
+        "rotation": 180,
+        "type": "L",
+      },
+      {
+        "id": 23,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 24,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 25,
+        "rotation": 180,
+        "type": "X",
+      },
+      {
+        "id": 26,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 27,
+        "rotation": 180,
+        "type": "I",
+      },
+    ],
+    [
+      {
+        "content": <Memo(ItemTile)
+          item="whale"
+        />,
+        "id": 28,
+        "rotation": 90,
+        "type": "T",
+        "x": 0,
+        "y": 4,
+      },
+      {
+        "id": 29,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="zebra"
+        />,
+        "id": 30,
+        "rotation": 0,
+        "type": "T",
+        "x": 2,
+        "y": 4,
+      },
+      {
+        "id": 31,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="bear"
+        />,
+        "id": 32,
+        "rotation": 270,
+        "type": "T",
+        "x": 4,
+        "y": 4,
+      },
+      {
+        "id": 33,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="crab"
+        />,
+        "id": 34,
+        "rotation": 270,
+        "type": "T",
+        "x": 6,
+        "y": 4,
+      },
+    ],
+    [
+      {
+        "id": 35,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 36,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 37,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 38,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "id": 39,
+        "rotation": 180,
+        "type": "I",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="bunny"
+        />,
+        "id": 40,
+        "rotation": 180,
+        "type": "T",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="moose"
+        />,
+        "id": 41,
+        "rotation": 180,
+        "type": "T",
+      },
+    ],
+    [
+      {
+        "content": <Memo(StartingTile)
+          color="blue"
+        />,
+        "id": 42,
+        "rotation": 0,
+        "type": "L",
+        "x": 0,
+        "y": 6,
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="cat"
+        />,
+        "id": 43,
+        "rotation": 180,
+        "type": "T",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="turtle"
+        />,
+        "id": 44,
+        "rotation": 0,
+        "type": "T",
+        "x": 2,
+        "y": 6,
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="trex"
+        />,
+        "id": 45,
+        "rotation": 180,
+        "type": "T",
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="jellyfish"
+        />,
+        "id": 46,
+        "rotation": 0,
+        "type": "T",
+        "x": 4,
+        "y": 6,
+      },
+      {
+        "content": <Memo(ItemTile)
+          item="squirrel"
+        />,
+        "id": 47,
+        "rotation": 180,
+        "type": "T",
+      },
+      {
+        "content": <Memo(StartingTile)
+          color="yellow"
+        />,
+        "id": 48,
+        "rotation": 270,
+        "type": "L",
+        "x": 6,
+        "y": 6,
+      },
+    ],
+  ],
+}
+`;
+
 exports[`moveTiles > moveDown 1`] = `
 {
   "playerTile": {

@@ -1,5 +1,6 @@
-import { describe, expect, test } from "vitest";
-import { BoardState, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
+import { describe, expect, test, vi } from "vitest";
+import { BoardState, getRandomBoardTiles, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
+import * as utils from "../utils";
 
 const createMockBoardState = (): BoardState => ({
   playerTile: { id: 0, rotation: 180, type: "L" },
@@ -58,5 +59,26 @@ describe("rotateRight", () => {
     expect(rotateRight(90)).toEqual(180);
     expect(rotateRight(180)).toEqual(270);
     expect(rotateRight(270)).toEqual(0);
+  });
+});
+
+vi.mock("../utils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../utils")>();
+
+  return {
+    ...actual,
+    getRandomInteger: vi.fn(),
+    shuffleArray: vi.fn(),
+  };
+});
+
+describe("getRandomBoardTiles", () => {
+  test("get board", () => {
+    vi.mocked(utils.getRandomInteger).mockReturnValue(2);
+    vi.mocked(utils.shuffleArray).mockImplementation((array: readonly unknown[]) => [...array]);
+
+    const actual = getRandomBoardTiles();
+
+    expect(actual).toMatchSnapshot();
   });
 });
