@@ -26,7 +26,7 @@ import {
   WhaleIcon,
   WildBoarIcon,
   ZebraIcon,
-} from "../assets/Icons";
+} from "../../assets/Icons";
 
 export const things = [
   "cow",
