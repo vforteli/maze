@@ -1,14 +1,8 @@
 import "./Board.scss";
-import React, { useCallback, useState } from "react";
-import { KeyedTileProps, TileMemoized } from "./tiles/Tile";
+import React, { useState } from "react";
+import { TileMemoized } from "./tiles/Tile";
 import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
-import { CardMemoized } from "./cards/Card";
-
-const EdgeTile = (props: { playerTile: KeyedTileProps; onClick: () => void }) => (
-  <div className="player-tile movable" onClick={props.onClick}>
-    <TileMemoized {...props.playerTile} key={props.playerTile.id} />
-  </div>
-);
+import { CardStackMemoized } from "./cards/CardStack";
 
 const Edge = ({
   direction,
@@ -26,7 +20,13 @@ const Edge = ({
   return (
     <div className={className}>
       {[...Array(count).keys()].map((i) =>
-        i % 2 !== 0 ? <EdgeTile key={i} playerTile={boardState.playerTile} onClick={() => onClick(i)} /> : <div key={i} />,
+        i % 2 !== 0 ? (
+          <div className="player-tile movable" onClick={() => onClick(i)}>
+            <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
+          </div>
+        ) : (
+          <div key={i} />
+        ),
       )}
     </div>
   );
@@ -35,9 +35,9 @@ const Edge = ({
 const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
 
-  const handleMoveTiles = useCallback((index: number, direction: MoveDirection) => {
+  const handleMoveTiles = (index: number, direction: MoveDirection) => {
     setBoardState((b) => moveTiles(b, index, direction));
-  }, []);
+  };
 
   const handleRotatePlayerTile = () => {
     setBoardState((s) => rotatePlayerTile(s));
@@ -45,16 +45,14 @@ const Board = () => {
 
   return (
     <div className="board-container">
-      <div style={{ width: 100, margin: 20 }}>
-        <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
-          <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
-        </div>
-      </div>
+      <CardStackMemoized />
 
-      <div className="card-stack">
-        <CardMemoized item="bunny" />
-        <CardMemoized item="cow" />
-        <CardMemoized item="trex" />
+      <div className="player-tile-container">
+        <div style={{ width: 80, margin: 20 }}>
+          <div className="player-tile" onClick={() => handleRotatePlayerTile()}>
+            <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
+          </div>
+        </div>
       </div>
 
       <div className="board-frame">
