@@ -26,30 +26,31 @@
   .frame-side {
     display: grid;
     grid-gap: 3px;
+    border: 2px solid;
 
     &.left {
-      border: 2px solid magenta;
+      border-color: magenta;
       grid-template-rows: repeat(7, 1fr);
       grid-column: 1 / 1;
       grid-row: 2 / 9;
     }
 
     &.right {
-      border: 2px solid cyan;
+      border-color: cyan;
       grid-template-rows: repeat(7, 1fr);
       grid-column: 9 / 9;
       grid-row: 2 / 9;
     }
 
     &.top {
-      border: 2px solid yellow;
+      border-color: yellow;
       grid-template-columns: repeat(7, 1fr);
       grid-column: 2 / 9;
       grid-row: 1 / 1;
     }
 
     &.bottom {
-      border: 2px solid darkorange;
+      border-color: darkorange;
       grid-template-columns: repeat(7, 1fr);
       grid-column: 2 / 9;
       grid-row: 9 / 9;
@@ -74,6 +75,7 @@
   }
 
   .movable-tile {
+    aspect-ratio: 1;
     offset-rotate: 0deg;
     offset-anchor: 0 0;
   }

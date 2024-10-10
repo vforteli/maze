@@ -1,5 +1,5 @@
 import "./Board.scss";
-import React, { RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
 import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
 import { CardStackMemoized } from "./cards/CardStack";
@@ -35,15 +35,16 @@ const MovableTile = ({
   move,
   targetRef,
   children,
+  direction,
   onAnimationEnd,
 }: {
   shift: boolean;
   move: boolean;
+  direction: MoveDirection | undefined;
   targetRef: RefObject<HTMLDivElement>;
   children: React.ReactNode;
   onAnimationEnd: () => void;
 }) => {
-  // all of this seems highly inefficient, although i guess if efficiency was a thing i wouldnt be doing this in css and react :D
   const ref = useRef<HTMLDivElement>(null);
   const [path, setPath] = useState<string | undefined>(undefined);
 
@@ -51,40 +52,44 @@ const MovableTile = ({
     if (ref.current !== null && targetRef.current !== null) {
       if (shift) {
         const animationOptions: KeyframeAnimationOptions = {
-          duration: 1000,
+          duration: 500,
           easing: "ease-in-out",
           composite: "replace",
           fill: "forwards",
         };
 
         const currentRect = ref.current.getBoundingClientRect();
-        const targetRect = targetRef.current?.getBoundingClientRect();
+        const targetRect = targetRef.current.getBoundingClientRect();
 
-        // offsets to move the piece one piece length in... some direction
-        // obviously this should check direction... using right for testing
-        const dx_shift = Math.round(currentRect.width + 3);
-        const dy_shift = 0;
+        // figure out how much the tiles should be moved, the magical number 3 is the grid gap...
+        const h_shift = currentRect.width + 3;
+        const v_shift = currentRect.height + 3;
+        const distance = direction === "right" || direction === "left" ? h_shift : v_shift;
 
-        // these are the offset from the current tile to the player tile
-        const dx_playertile = Math.round(targetRect.x - currentRect.x);
-        const dy_playertile = Math.round(targetRect.y - currentRect.y);
+        const dx_shift = direction === "right" ? h_shift : direction === "left" ? -h_shift : 0;
+        const dy_shift = direction === "down" ? v_shift : direction === "up" ? -v_shift : 0;
+
+        const dx_playertile = targetRect.x - currentRect.x;
+        const dy_playertile = targetRect.y - currentRect.y;
 
         setPath(`path("M0,0 L${dx_shift},${dy_shift} L${dx_playertile},${dy_playertile}")`);
 
-        const shiftAnimation = ref.current.animate([{ offsetDistance: "0%" }, { offsetDistance: `${dx_shift}px` }], { ...animationOptions, duration: 500 });
-        shiftAnimation.addEventListener("finish", () => {
-          if (move) {
-            const moveAnimation = ref.current!.animate([{ offsetDistance: `${dx_shift}px` }, { offsetDistance: "100%" }], animationOptions);
-            moveAnimation.addEventListener("finish", () => {
-              onAnimationEnd();
-            });
-          }
-        });
+        ref.current.animate([{ offsetDistance: "0%" }, { offsetDistance: `${distance}px` }], animationOptions).addEventListener(
+          "finish",
+          () => {
+            if (move && ref.current !== null) {
+              ref.current
+                .animate([{ offsetDistance: `${distance}px` }, { offsetDistance: "100%" }], animationOptions)
+                .addEventListener("finish", onAnimationEnd, { once: true });
+            }
+          },
+          { once: true },
+        );
       } else {
         setPath(undefined);
       }
     }
-  }, [targetRef, ref, shift, move, onAnimationEnd]);
+  }, [targetRef, ref, shift, move, onAnimationEnd, direction]);
 
   return (
     <div className="movable-tile" style={{ offsetPath: path }} ref={ref}>
@@ -96,10 +101,12 @@ const MovableTile = ({
 const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
   const playerTileRef = useRef<HTMLDivElement>(null);
-  const [moveRowIndex, setMoveRowIndex] = useState<number | undefined>(undefined);
+  const [moveIndex, setMoveIndex] = useState<number | undefined>(undefined);
+  const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
 
   const handleMoveTiles = (index: number, direction: MoveDirection) => {
-    setMoveRowIndex(direction === "right" ? index : undefined);
+    setMoveIndex(index);
+    setMoveDirection(direction);
   };
 
   const handleRotatePlayerTile = () => {
@@ -107,7 +114,8 @@ const Board = () => {
   };
 
   const handleMoveTilesAnimationEnd = (index: number, direction: MoveDirection) => {
-    setMoveRowIndex(undefined);
+    setMoveIndex(undefined);
+    setMoveDirection(undefined);
     setBoardState((b) => moveTiles(b, index, direction));
   };
 
@@ -131,13 +139,24 @@ const Board = () => {
         <div className="board">
           {boardState.tiles.flatMap((o, rowIndex) =>
             o.map((o, columnIndex) => {
+              const shouldShift =
+                ((moveDirection === "up" || moveDirection === "down") && columnIndex === moveIndex) ||
+                ((moveDirection === "left" || moveDirection === "right") && rowIndex === moveIndex);
+
+              const shouldMove =
+                (shouldShift && moveDirection === "up" && rowIndex === 0) ||
+                (shouldShift && moveDirection === "down" && rowIndex === 6) ||
+                (shouldShift && moveDirection === "left" && columnIndex === 0) ||
+                (shouldShift && moveDirection === "right" && columnIndex === 6);
+
               return (
                 <MovableTile
-                  move={moveRowIndex === rowIndex && columnIndex === 6}
-                  shift={moveRowIndex === rowIndex}
+                  direction={moveDirection}
+                  move={shouldMove}
+                  shift={shouldShift}
                   key={`${columnIndex}_${rowIndex}`}
                   targetRef={playerTileRef}
-                  onAnimationEnd={() => handleMoveTilesAnimationEnd(rowIndex, "right")}
+                  onAnimationEnd={() => handleMoveTilesAnimationEnd(moveIndex!, moveDirection!)} // todo fix..
                 >
                   <TileMemoized {...o} />
                 </MovableTile>
