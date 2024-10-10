@@ -72,4 +72,9 @@
   .player-tile .tile {
     transition: transform 0.3s ease-in-out;
   }
+
+  .movable-tile {
+    offset-rotate: 0deg;
+    offset-anchor: 0 0;
+  }
 }
