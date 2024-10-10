@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .board-container {
   .tile-container {
     filter: drop-shadow(1px 1px 2px rgb(0 0 0 / 20%));
@@ -10,8 +12,8 @@
   }
 
   .board {
-    background-color: darken(chocolate, 6);
-    border: 2px solid darken(chocolate, 18);
+    background-color: color.adjust(chocolate, $lightness: -6%);
+    border: 2px solid color.adjust(chocolate, $lightness: -18%);
     border-radius: 10px;
     padding: 4px;
     grid-column: 2 / 9;

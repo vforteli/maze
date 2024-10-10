@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .tile-container {
   position: relative;
   cursor: pointer;
@@ -14,7 +16,7 @@
   .tile {
     overflow: hidden;
     background-color: antiquewhite;
-    border: 1px solid lighten(chocolate, 10);
+    border: 1px solid color.adjust(chocolate, $lightness: 10%);
     border-radius: 6px;
     aspect-ratio: 1;
 
