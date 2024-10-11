@@ -1,11 +1,11 @@
 :root {
   --table-width: 80vw;
-  --backgrond: rgb(21, 31, 40);
+  --background: rgb(21, 31, 40);
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: var(--backgrond);  
+  background-color: var(--background);  
 }
 
 .container {

@@ -67,8 +67,8 @@ const MovableTile = ({
         const currentRect = ref.current.getBoundingClientRect();
 
         // figure out how much the tiles should be moved, the magical number 3 is the grid gap...
-        const h_shift = currentRect.width + 3;
-        const v_shift = currentRect.height + 3;
+        const h_shift = currentRect.width + 2;
+        const v_shift = currentRect.height + 2;
         const distance = direction === "right" || direction === "left" ? h_shift : v_shift;
 
         const dx_shift = direction === "right" ? h_shift : direction === "left" ? -h_shift : 0;

@@ -1,6 +1,8 @@
 @use "sass:color";
 
 .board-container {
+  --gap: 2px;
+
   .tile-container {
     filter: drop-shadow(1px 1px 2px rgb(0 0 0 / 20%));
   }
@@ -15,7 +17,7 @@
   .board {
     aspect-ratio: 1;
     background-color: color.adjust(chocolate, $lightness: -6%);
-    border: 2px solid color.adjust(chocolate, $lightness: -18%);
+    outline: 2px solid color.adjust(chocolate, $lightness: -18%);
     border-radius: 10px;
     padding: 4px;
     grid-column: 2 / 9;
@@ -23,19 +25,18 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(7, 1fr);
-    grid-gap: 3px;
+    grid-gap: var(--gap);
   }
 
   .frame-side {
     display: grid;
-    grid-gap: 3px;
-    // border: 2px solid;
-    margin: 2px;
+    grid-gap: var(--gap);
+    margin: var(--gap);
     position: relative;
 
     &.left {
-      left: 5px;
-      padding: 4px 0;
+      left: 4px;
+      padding: 3px 0;
       border-color: magenta;
       grid-template-rows: repeat(7, 1fr);
       grid-column: 1 / 1;
@@ -43,8 +44,8 @@
     }
 
     &.right {
-      right: 5px;
-      padding: 4px 0;
+      right: 4px;
+      padding: 3px 0;
       border-color: cyan;
       grid-template-rows: repeat(7, 1fr);
       grid-column: 9 / 9;
@@ -52,8 +53,8 @@
     }
 
     &.top {
-      top: 5px;
-      padding: 0 4px;
+      top: 4px;
+      padding: 0 3px;
       border-color: yellow;
       grid-template-columns: repeat(7, 1fr);
       grid-column: 2 / 9;
@@ -61,8 +62,8 @@
     }
 
     &.bottom {
-      bottom: 5px;
-      padding: 0 4px;
+      bottom: 4px;
+      padding: 0 3px;
       border-color: darkorange;
       grid-template-columns: repeat(7, 1fr);
       grid-column: 2 / 9;
