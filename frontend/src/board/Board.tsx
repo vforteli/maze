@@ -5,11 +5,15 @@ import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayer
 import { CardStackMemoized } from "./cards/CardStack";
 
 const Edge = ({
-  direction,
+  moveDirection,
+  moveIndex,
   boardState,
   onClick,
   className,
+  direction,
 }: {
+  moveDirection: MoveDirection | undefined;
+  moveIndex: number | undefined;
   className: string;
   direction: MoveDirection;
   boardState: BoardState;
@@ -19,11 +23,13 @@ const Edge = ({
     <div className={className}>
       {[...Array(direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length).keys()].map((i) =>
         i % 2 !== 0 ? (
-          <div key={i} className="player-tile movable" onClick={() => onClick(i)}>
-            <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
+          <div key={i} className="player-tile edge" onClick={() => onClick(i)}>
+            <MovableTile direction={direction} move={false} shift={direction === moveDirection && i === moveIndex} onAnimationEnd={() => {}}>
+              <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
+            </MovableTile>
           </div>
         ) : (
-          <div key={i} />
+          <div className="edge" key={i} />
         ),
       )}
     </div>
@@ -41,7 +47,7 @@ const MovableTile = ({
   shift: boolean;
   move: boolean;
   direction: MoveDirection | undefined;
-  targetRef: RefObject<HTMLDivElement>;
+  targetRef?: RefObject<HTMLDivElement>;
   children: React.ReactNode;
   onAnimationEnd: () => void;
 }) => {
@@ -49,7 +55,7 @@ const MovableTile = ({
   const [path, setPath] = useState<string | undefined>(undefined);
 
   useLayoutEffect(() => {
-    if (ref.current !== null && targetRef.current !== null) {
+    if (ref.current !== null) {
       if (shift) {
         const animationOptions: KeyframeAnimationOptions = {
           duration: 500,
@@ -59,7 +65,6 @@ const MovableTile = ({
         };
 
         const currentRect = ref.current.getBoundingClientRect();
-        const targetRect = targetRef.current.getBoundingClientRect();
 
         // figure out how much the tiles should be moved, the magical number 3 is the grid gap...
         const h_shift = currentRect.width + 3;
@@ -69,8 +74,9 @@ const MovableTile = ({
         const dx_shift = direction === "right" ? h_shift : direction === "left" ? -h_shift : 0;
         const dy_shift = direction === "down" ? v_shift : direction === "up" ? -v_shift : 0;
 
-        const dx_playertile = targetRect.x - currentRect.x;
-        const dy_playertile = targetRect.y - currentRect.y;
+        const targetRect = targetRef?.current?.getBoundingClientRect();
+        const dx_playertile = targetRect ? targetRect.x - currentRect.x : 0;
+        const dy_playertile = targetRect ? targetRect.y - currentRect.y : 0;
 
         setPath(`path("M0,0 L${dx_shift},${dy_shift} L${dx_playertile},${dy_playertile}")`);
 
@@ -132,10 +138,38 @@ const Board = () => {
       </div>
 
       <div className="board-frame">
-        <Edge className="frame-side left" direction="right" boardState={boardState} onClick={(i) => handleMoveTiles(i, "right")} />
-        <Edge className="frame-side right" direction="left" boardState={boardState} onClick={(i) => handleMoveTiles(i, "left")} />
-        <Edge className="frame-side top" direction="down" boardState={boardState} onClick={(i) => handleMoveTiles(i, "down")} />
-        <Edge className="frame-side bottom" direction="up" boardState={boardState} onClick={(i) => handleMoveTiles(i, "up")} />
+        <Edge
+          className="frame-side left"
+          direction="right"
+          boardState={boardState}
+          moveDirection={moveDirection}
+          moveIndex={moveIndex}
+          onClick={(i) => handleMoveTiles(i, "right")}
+        />
+        <Edge
+          className="frame-side right"
+          direction="left"
+          boardState={boardState}
+          moveDirection={moveDirection}
+          moveIndex={moveIndex}
+          onClick={(i) => handleMoveTiles(i, "left")}
+        />
+        <Edge
+          className="frame-side top"
+          direction="down"
+          boardState={boardState}
+          moveDirection={moveDirection}
+          moveIndex={moveIndex}
+          onClick={(i) => handleMoveTiles(i, "down")}
+        />
+        <Edge
+          className="frame-side bottom"
+          direction="up"
+          boardState={boardState}
+          moveDirection={moveDirection}
+          moveIndex={moveIndex}
+          onClick={(i) => handleMoveTiles(i, "up")}
+        />
         <div className="board">
           {boardState.tiles.flatMap((o, rowIndex) =>
             o.map((o, columnIndex) => {

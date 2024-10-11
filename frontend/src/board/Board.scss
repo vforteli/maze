@@ -6,12 +6,14 @@
   }
 
   .board-frame {
+    aspect-ratio: 1;
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: repeat(9, 1fr);
   }
 
   .board {
+    aspect-ratio: 1;
     background-color: color.adjust(chocolate, $lightness: -6%);
     border: 2px solid color.adjust(chocolate, $lightness: -18%);
     border-radius: 10px;
@@ -20,15 +22,20 @@
     grid-row: 2 / 9;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 1fr);
     grid-gap: 3px;
   }
 
   .frame-side {
     display: grid;
     grid-gap: 3px;
-    border: 2px solid;
+    // border: 2px solid;
+    margin: 2px;
+    position: relative;
 
     &.left {
+      left: 5px;
+      padding: 4px 0;
       border-color: magenta;
       grid-template-rows: repeat(7, 1fr);
       grid-column: 1 / 1;
@@ -36,6 +43,8 @@
     }
 
     &.right {
+      right: 5px;
+      padding: 4px 0;
       border-color: cyan;
       grid-template-rows: repeat(7, 1fr);
       grid-column: 9 / 9;
@@ -43,6 +52,8 @@
     }
 
     &.top {
+      top: 5px;
+      padding: 0 4px;
       border-color: yellow;
       grid-template-columns: repeat(7, 1fr);
       grid-column: 2 / 9;
@@ -50,18 +61,21 @@
     }
 
     &.bottom {
+      bottom: 5px;
+      padding: 0 4px;
       border-color: darkorange;
       grid-template-columns: repeat(7, 1fr);
       grid-column: 2 / 9;
       grid-row: 9 / 9;
     }
 
-    div.movable {
+    div.edge {
+      aspect-ratio: 1;
       transition: filter 0.1s ease;
-      filter: brightness(40%) contrast(60%) grayscale(60%);
+      filter: brightness(40%) contrast(60%) grayscale(60%) opacity(40%);
     }
 
-    div.movable:hover {
+    div.edge:hover {
       filter: brightness(100%) contrast(100%);
     }
   }
