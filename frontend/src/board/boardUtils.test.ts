@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { BoardState, getRandomBoardTiles, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
+import { BoardState, getRandomBoardTiles, getRotatedDirections, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
 import * as utils from "../utils";
 
 const createMockBoardState = (): BoardState => ({
@@ -80,5 +80,23 @@ describe("getRandomBoardTiles", () => {
     const actual = getRandomBoardTiles();
 
     expect(actual).toMatchSnapshot();
+  });
+});
+
+describe("getRotatedDirections", () => {
+  test("rotate 0", () => {
+    expect(getRotatedDirections({ rotation: 0, type: "I" })).toEqual([90, 270]);
+  });
+
+  test("rotate 90", () => {
+    expect(getRotatedDirections({ rotation: 90, type: "I" })).toEqual([180, 0]);
+  });
+
+  test("rotate 180", () => {
+    expect(getRotatedDirections({ rotation: 180, type: "I" })).toEqual([270, 90]);
+  });
+
+  test("rotate 270", () => {
+    expect(getRotatedDirections({ rotation: 270, type: "I" })).toEqual([0, 180]);
   });
 });

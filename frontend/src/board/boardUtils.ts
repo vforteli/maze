@@ -1,7 +1,7 @@
 import { shuffleArray, getRandomInteger } from "../utils";
-import { KeyedTileProps } from "./tiles/Tile";
+import { KeyedTileProps, TileProps } from "./tiles/Tile";
 import { fixedTiles, movableTiles } from "./tiles/Tiles";
-import { directions, Direction } from "./tiles/TileTypes";
+import { directions, Direction, TileTypes } from "./tiles/TileTypes";
 
 const BoardSize = 7;
 
@@ -11,6 +11,8 @@ export type BoardState = {
 };
 
 export type MoveDirection = "left" | "right" | "up" | "down";
+
+export type Point = { x: number; y: number };
 
 export function moveTiles(board: Readonly<BoardState>, index: number, direction: MoveDirection) {
   return direction === "left" || direction === "right" ? moveRowTilesX(board, index, direction) : moveRowTilesY(board, index, direction);
@@ -110,4 +112,21 @@ export function rotateRight(direction: Direction): Direction {
     case 270:
       return 0;
   }
+}
+
+export function getRotatedDirections(tile: TileProps) {
+  return TileTypes[tile.type].map((o) => (o + tile.rotation) % 360);
+}
+
+export function getReachableNeighbours(board: Readonly<BoardState>, from: Point) {
+  // todo figure out neighbours
+}
+
+export function findReachableTiles(board: Readonly<BoardState>, from: Point) {
+  // todo do something...
+  const openSet: Record<number, { cameFrom: number }> = {};
+  const closedSet: Record<number, { cameFrom: number }> = {};
+
+  const fromTile = board.tiles[from.x][from.y];
+  const openings = getRotatedDirections(fromTile);
 }
