@@ -14,6 +14,8 @@ export type MoveDirection = "left" | "right" | "up" | "down";
 
 export type Point = { x: number; y: number };
 
+export type Neighbour = { direction: Direction } & Point;
+
 export function moveTiles(board: Readonly<BoardState>, index: number, direction: MoveDirection) {
   return direction === "left" || direction === "right" ? moveRowTilesX(board, index, direction) : moveRowTilesY(board, index, direction);
 }
@@ -118,15 +120,57 @@ export function getRotatedDirections(tile: TileProps) {
   return TileTypes[tile.type].map((o) => (o + tile.rotation) % 360);
 }
 
-export function getReachableNeighbours(board: Readonly<BoardState>, from: Point) {
-  // todo figure out neighbours
+export function getNeighbours(point: Point, height: number, width: number): Neighbour[] {
+  const neighbourMatrix: readonly Neighbour[] = [
+    { y: -1, x: 0, direction: 0 },
+    { y: 0, x: 1, direction: 90 },
+    { y: 1, x: 0, direction: 180 },
+    { y: 0, x: -1, direction: 270 },
+  ];
+
+  return neighbourMatrix
+    .map((o) => ({ y: point.y + o.y, x: point.x + o.x, direction: o.direction }))
+    .filter((o) => o.x >= 0 && o.x < width && o.y >= 0 && o.y < height);
 }
 
-export function findReachableTiles(board: Readonly<BoardState>, from: Point) {
-  // todo do something...
-  const openSet: Record<number, { cameFrom: number }> = {};
-  const closedSet: Record<number, { cameFrom: number }> = {};
+export function getReachableNeighbours(board: Readonly<BoardState>, from: Point) {
+  const height = board.tiles.length;
+  const width = height; // todo well this is unfortunate...
 
-  const fromTile = board.tiles[from.x][from.y];
-  const openings = getRotatedDirections(fromTile);
+  const boardWithRotatedTiles = board.tiles.map((row) => row.map((column) => ({ ...column, openings: getRotatedDirections(column) })));
+  const fromTile = boardWithRotatedTiles[from.y][from.x];
+
+  return getNeighbours(from, height, width).filter(
+    (n) => fromTile.openings.includes(n.direction) && boardWithRotatedTiles[n.y][n.x].openings.includes((n.direction + 180) % 360),
+  );
+}
+
+export function getReachableTiles(board: Readonly<BoardState>, from: Point) {
+  // todo calculate orientations once here...
+  // todo well this is unfortunate... fix..
+  const height = board.tiles.length;
+  const width = height;
+
+  const pointToIndex = (point: Point) => point.y * width + point.x;
+
+  const closedSet: Record<number, number | undefined> = {}; // this is not dijkstra or a*, we dont care about distance
+
+  const getReachableTilesRecursive = (board: Readonly<BoardState>, from: Point) => {
+    for (const currentTile of getReachableNeighbours(board, from)) {
+      const currentKey = pointToIndex(currentTile);
+
+      if (currentKey in closedSet) {
+        continue;
+      }
+
+      closedSet[currentKey] = pointToIndex(from);
+      getReachableTilesRecursive(board, currentTile);
+    }
+  };
+
+  closedSet[pointToIndex(from)] = undefined;
+
+  getReachableTilesRecursive(board, from);
+
+  return closedSet;
 }

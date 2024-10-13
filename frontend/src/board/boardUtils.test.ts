@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { BoardState, getRandomBoardTiles, getRotatedDirections, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
+import { BoardState, getNeighbours, getRandomBoardTiles, getRotatedDirections, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
 import * as utils from "../utils";
 
 const createMockBoardState = (): BoardState => ({
@@ -98,5 +98,76 @@ describe("getRotatedDirections", () => {
 
   test("rotate 270", () => {
     expect(getRotatedDirections({ rotation: 270, type: "I" })).toEqual([0, 180]);
+  });
+});
+
+describe("getNeighbours", () => {
+  test("top left", () => {
+    expect(getNeighbours({ x: 0, y: 0 }, 3, 3)).toEqual([
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+    ]);
+  });
+
+  test("top middle", () => {
+    expect(getNeighbours({ x: 1, y: 0 }, 3, 3)).toEqual([
+      { x: 2, y: 0 },
+      { x: 1, y: 1 },
+      { x: 0, y: 0 },
+    ]);
+  });
+
+  test("top right", () => {
+    expect(getNeighbours({ x: 2, y: 0 }, 3, 3)).toEqual([
+      { x: 2, y: 1 },
+      { x: 1, y: 0 },
+    ]);
+  });
+
+  test("middle", () => {
+    expect(getNeighbours({ x: 1, y: 1 }, 3, 3)).toEqual([
+      { x: 1, y: 0 },
+      { x: 2, y: 1 },
+      { x: 1, y: 2 },
+      { x: 0, y: 1 },
+    ]);
+  });
+
+  test("bottom left", () => {
+    expect(getNeighbours({ x: 0, y: 2 }, 3, 3)).toEqual([
+      { x: 0, y: 1 },
+      { x: 1, y: 2 },
+    ]);
+  });
+
+  test("bottom right", () => {
+    expect(getNeighbours({ x: 2, y: 2 }, 3, 3)).toEqual([
+      { x: 2, y: 1 },
+      { x: 1, y: 2 },
+    ]);
+  });
+
+  test("bottom middle", () => {
+    expect(getNeighbours({ x: 1, y: 2 }, 3, 3)).toEqual([
+      { x: 1, y: 1 },
+      { x: 2, y: 2 },
+      { x: 0, y: 2 },
+    ]);
+  });
+
+  test("left middle", () => {
+    expect(getNeighbours({ x: 0, y: 1 }, 3, 3)).toEqual([
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+      { x: 0, y: 2 },
+    ]);
+  });
+
+  test("right middle", () => {
+    expect(getNeighbours({ x: 2, y: 1 }, 3, 3)).toEqual([
+      { x: 2, y: 0 },
+      { x: 2, y: 2 },
+      { x: 1, y: 1 },
+    ]);
   });
 });

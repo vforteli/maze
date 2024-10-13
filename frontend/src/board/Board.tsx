@@ -1,7 +1,7 @@
 import "./Board.scss";
 import React, { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
-import { BoardState, getRandomBoardTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
+import { BoardState, getRandomBoardTiles, getReachableTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
 import { CardStackMemoized } from "./cards/CardStack";
 
 const Edge = ({
@@ -119,10 +119,13 @@ const Board = () => {
     setBoardState((s) => rotatePlayerTile(s));
   };
 
-  const handleMoveTilesAnimationEnd = (index: number, direction: MoveDirection) => {
+  const handleMoveTilesAnimationEnd = () => {
+    if (moveIndex !== undefined && moveDirection !== undefined) {
+      setBoardState((b) => moveTiles(b, moveIndex, moveDirection));
+    }
+
     setMoveIndex(undefined);
     setMoveDirection(undefined);
-    setBoardState((b) => moveTiles(b, index, direction));
   };
 
   return (
@@ -190,9 +193,16 @@ const Board = () => {
                   shift={shouldShift}
                   key={`${columnIndex}_${rowIndex}`}
                   targetRef={playerTileRef}
-                  onAnimationEnd={() => handleMoveTilesAnimationEnd(moveIndex!, moveDirection!)} // todo fix..
+                  onAnimationEnd={handleMoveTilesAnimationEnd}
                 >
-                  <TileMemoized {...o} />
+                  <TileMemoized
+                    {...o}
+                    onClick={() => {
+                      const reachableTiles = getReachableTiles(boardState, { x: columnIndex, y: rowIndex });
+                      console.debug(`tiles reachable from ${columnIndex}:${rowIndex}`);
+                      console.debug(reachableTiles);
+                    }}
+                  />
                 </MovableTile>
               );
             }),

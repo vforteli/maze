@@ -6,14 +6,15 @@ export type TileProps = {
   type: TileType;
   rotation: Direction;
   content?: ReactNode | undefined;
+  onClick?: () => void;
 };
 
 export type KeyedTileProps = TileProps & {
   id: number;
 };
 
-const Tile = (props: TileProps) => (
-  <div className="tile-container">
+const Tile: React.FC<TileProps> = (props) => (
+  <div className="tile-container" onClick={props.onClick}>
     <div className="content">{props.content}</div>
     <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
       <TileBackground type={props.type} />
