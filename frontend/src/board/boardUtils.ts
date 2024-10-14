@@ -120,6 +120,9 @@ export function getRotatedDirections(tile: TileProps) {
   return TileTypes[tile.type].map((o) => (o + tile.rotation) % 360);
 }
 
+/**
+ * Get neighbour coordinates taking board bounds into consideration
+ */
 export function getNeighbours(point: Point, height: number, width: number): Neighbour[] {
   const neighbourMatrix: readonly Neighbour[] = [
     { y: -1, x: 0, direction: 0 },
@@ -133,6 +136,9 @@ export function getNeighbours(point: Point, height: number, width: number): Neig
     .filter((o) => o.x >= 0 && o.x < width && o.y >= 0 && o.y < height);
 }
 
+/**
+ * Get reachable neighbours from specified tile
+ */
 export function getReachableNeighbours(board: Readonly<BoardState>, from: Point) {
   const height = board.tiles.length;
   const width = height; // todo well this is unfortunate...
@@ -145,6 +151,9 @@ export function getReachableNeighbours(board: Readonly<BoardState>, from: Point)
   );
 }
 
+/**
+ * Get all tiles reachable from specified tile
+ */
 export function getReachableTiles(board: Readonly<BoardState>, from: Point) {
   // todo calculate orientations once here...
   // todo well this is unfortunate... fix..

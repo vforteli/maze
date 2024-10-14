@@ -12,6 +12,60 @@
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: repeat(9, 1fr);
+
+    .side {
+      display: grid;
+      grid-gap: var(--gap);
+      margin: var(--gap);
+      position: relative;
+
+      &.left {
+        left: 4px;
+        padding: 3px 0;
+        border-color: magenta;
+        grid-template-rows: repeat(7, 1fr);
+        grid-column: 1 / 1;
+        grid-row: 2 / 9;
+      }
+
+      &.right {
+        right: 4px;
+        padding: 3px 0;
+        border-color: cyan;
+        grid-template-rows: repeat(7, 1fr);
+        grid-column: 9 / 9;
+        grid-row: 2 / 9;
+      }
+
+      &.top {
+        top: 4px;
+        padding: 0 3px;
+        border-color: yellow;
+        grid-template-columns: repeat(7, 1fr);
+        grid-column: 2 / 9;
+        grid-row: 1 / 1;
+      }
+
+      &.bottom {
+        bottom: 4px;
+        padding: 0 3px;
+        border-color: darkorange;
+        grid-template-columns: repeat(7, 1fr);
+        grid-column: 2 / 9;
+        grid-row: 9 / 9;
+      }
+
+      div.edge {
+        will-change: filter; // this is here to fix some issues in safari where the svgs will jump around a bit when hovering
+        aspect-ratio: 1;
+        transition: filter 0.1s ease;
+        filter: brightness(40%) contrast(60%) grayscale(60%) opacity(40%);
+      }
+
+      div.edge:hover {
+        filter: brightness(100%) contrast(100%);
+      }
+    }
   }
 
   .board {
@@ -26,59 +80,6 @@
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(7, 1fr);
     grid-gap: var(--gap);
-  }
-
-  .frame-side {
-    display: grid;
-    grid-gap: var(--gap);
-    margin: var(--gap);
-    position: relative;
-
-    &.left {
-      left: 4px;
-      padding: 3px 0;
-      border-color: magenta;
-      grid-template-rows: repeat(7, 1fr);
-      grid-column: 1 / 1;
-      grid-row: 2 / 9;
-    }
-
-    &.right {
-      right: 4px;
-      padding: 3px 0;
-      border-color: cyan;
-      grid-template-rows: repeat(7, 1fr);
-      grid-column: 9 / 9;
-      grid-row: 2 / 9;
-    }
-
-    &.top {
-      top: 4px;
-      padding: 0 3px;
-      border-color: yellow;
-      grid-template-columns: repeat(7, 1fr);
-      grid-column: 2 / 9;
-      grid-row: 1 / 1;
-    }
-
-    &.bottom {
-      bottom: 4px;
-      padding: 0 3px;
-      border-color: darkorange;
-      grid-template-columns: repeat(7, 1fr);
-      grid-column: 2 / 9;
-      grid-row: 9 / 9;
-    }
-
-    div.edge {
-      aspect-ratio: 1;
-      transition: filter 0.1s ease;
-      filter: brightness(40%) contrast(60%) grayscale(60%) opacity(40%);
-    }
-
-    div.edge:hover {
-      filter: brightness(100%) contrast(100%);
-    }
   }
 
   .player-tile-container {

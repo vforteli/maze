@@ -1,7 +1,7 @@
 import "./Board.scss";
 import React, { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
-import { BoardState, getRandomBoardTiles, getReachableTiles, MoveDirection, moveTiles, rotatePlayerTile } from "./boardUtils";
+import { BoardState, getRandomBoardTiles, getReachableTiles, MoveDirection, moveTiles, Point, rotatePlayerTile } from "./boardUtils";
 import { CardStackMemoized } from "./cards/CardStack";
 
 const Edge = ({
@@ -17,13 +17,13 @@ const Edge = ({
   className: string;
   direction: MoveDirection;
   boardState: BoardState;
-  onClick: (i: number) => void;
+  onClick: (i: number, direction: MoveDirection) => void;
 }) => {
   return (
     <div className={className}>
       {[...Array(direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length).keys()].map((i) =>
         i % 2 !== 0 ? (
-          <div key={i} className="player-tile edge" onClick={() => onClick(i)}>
+          <div key={i} className="player-tile edge" onClick={() => onClick(i, direction)}>
             <MovableTile direction={direction} move={false} shift={direction === moveDirection && i === moveIndex} onAnimationEnd={() => {}}>
               <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
             </MovableTile>
@@ -106,17 +106,14 @@ const MovableTile = ({
 
 const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
-  const playerTileRef = useRef<HTMLDivElement>(null);
   const [moveIndex, setMoveIndex] = useState<number | undefined>(undefined);
   const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
+
+  const playerTileRef = useRef<HTMLDivElement>(null);
 
   const handleMoveTiles = (index: number, direction: MoveDirection) => {
     setMoveIndex(index);
     setMoveDirection(direction);
-  };
-
-  const handleRotatePlayerTile = () => {
-    setBoardState((s) => rotatePlayerTile(s));
   };
 
   const handleMoveTilesAnimationEnd = () => {
@@ -128,51 +125,28 @@ const Board = () => {
     setMoveDirection(undefined);
   };
 
+  const handleTileClick = (point: Point) => {
+    const reachableTiles = getReachableTiles(boardState, { x: point.x, y: point.y });
+    console.debug(reachableTiles);
+  };
+
   return (
     <div className="board-container">
       <CardStackMemoized />
 
       <div className="player-tile-container">
         <div style={{ width: 80, margin: 20 }}>
-          <div ref={playerTileRef} className="player-tile" onClick={() => handleRotatePlayerTile()}>
+          <div ref={playerTileRef} className="player-tile" onClick={() => setBoardState((s) => rotatePlayerTile(s))}>
             <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
           </div>
         </div>
       </div>
 
       <div className="board-frame">
-        <Edge
-          className="frame-side left"
-          direction="right"
-          boardState={boardState}
-          moveDirection={moveDirection}
-          moveIndex={moveIndex}
-          onClick={(i) => handleMoveTiles(i, "right")}
-        />
-        <Edge
-          className="frame-side right"
-          direction="left"
-          boardState={boardState}
-          moveDirection={moveDirection}
-          moveIndex={moveIndex}
-          onClick={(i) => handleMoveTiles(i, "left")}
-        />
-        <Edge
-          className="frame-side top"
-          direction="down"
-          boardState={boardState}
-          moveDirection={moveDirection}
-          moveIndex={moveIndex}
-          onClick={(i) => handleMoveTiles(i, "down")}
-        />
-        <Edge
-          className="frame-side bottom"
-          direction="up"
-          boardState={boardState}
-          moveDirection={moveDirection}
-          moveIndex={moveIndex}
-          onClick={(i) => handleMoveTiles(i, "up")}
-        />
+        <Edge className="side left" direction="right" boardState={boardState} moveDirection={moveDirection} moveIndex={moveIndex} onClick={handleMoveTiles} />
+        <Edge className="side right" direction="left" boardState={boardState} moveDirection={moveDirection} moveIndex={moveIndex} onClick={handleMoveTiles} />
+        <Edge className="side top" direction="down" boardState={boardState} moveDirection={moveDirection} moveIndex={moveIndex} onClick={handleMoveTiles} />
+        <Edge className="side bottom" direction="up" boardState={boardState} moveDirection={moveDirection} moveIndex={moveIndex} onClick={handleMoveTiles} />
         <div className="board">
           {boardState.tiles.flatMap((o, rowIndex) =>
             o.map((o, columnIndex) => {
@@ -181,10 +155,11 @@ const Board = () => {
                 ((moveDirection === "left" || moveDirection === "right") && rowIndex === moveIndex);
 
               const shouldMove =
-                (shouldShift && moveDirection === "up" && rowIndex === 0) ||
-                (shouldShift && moveDirection === "down" && rowIndex === 6) ||
-                (shouldShift && moveDirection === "left" && columnIndex === 0) ||
-                (shouldShift && moveDirection === "right" && columnIndex === 6);
+                shouldShift &&
+                ((moveDirection === "up" && rowIndex === 0) ||
+                  (moveDirection === "down" && rowIndex === 6) ||
+                  (moveDirection === "left" && columnIndex === 0) ||
+                  (moveDirection === "right" && columnIndex === 6));
 
               return (
                 <MovableTile
@@ -195,14 +170,7 @@ const Board = () => {
                   targetRef={playerTileRef}
                   onAnimationEnd={handleMoveTilesAnimationEnd}
                 >
-                  <TileMemoized
-                    {...o}
-                    onClick={() => {
-                      const reachableTiles = getReachableTiles(boardState, { x: columnIndex, y: rowIndex });
-                      console.debug(`tiles reachable from ${columnIndex}:${rowIndex}`);
-                      console.debug(reachableTiles);
-                    }}
-                  />
+                  <TileMemoized {...o} onClick={() => handleTileClick({ x: columnIndex, y: rowIndex })} />
                 </MovableTile>
               );
             }),
