@@ -108,6 +108,7 @@ const Board = () => {
   const [boardState, setBoardState] = useState(getRandomBoardTiles());
   const [moveIndex, setMoveIndex] = useState<number | undefined>(undefined);
   const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
+  const [highlightTiles, setHighlightTiles] = useState<Record<number, number | undefined>>({});
 
   const playerTileRef = useRef<HTMLDivElement>(null);
 
@@ -127,6 +128,7 @@ const Board = () => {
 
   const handleTileClick = (point: Point) => {
     const reachableTiles = getReachableTiles(boardState, { x: point.x, y: point.y });
+    setHighlightTiles(reachableTiles);
     console.debug(reachableTiles);
   };
 
@@ -161,6 +163,8 @@ const Board = () => {
                   (moveDirection === "left" && columnIndex === 0) ||
                   (moveDirection === "right" && columnIndex === 6));
 
+              const index = rowIndex * 7 + columnIndex;
+
               return (
                 <MovableTile
                   direction={moveDirection}
@@ -170,7 +174,9 @@ const Board = () => {
                   targetRef={playerTileRef}
                   onAnimationEnd={handleMoveTilesAnimationEnd}
                 >
-                  <TileMemoized {...o} onClick={() => handleTileClick({ x: columnIndex, y: rowIndex })} />
+                  <div className={index in highlightTiles ? "" : "muted-tile"}>
+                    <TileMemoized {...o} onClick={() => handleTileClick({ x: columnIndex, y: rowIndex })} />
+                  </div>
                 </MovableTile>
               );
             }),

@@ -96,3 +96,12 @@
     offset-anchor: 0 0;
   }
 }
+
+// basically only for debugging and testing
+.highlight {
+  filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.9));
+}
+
+.muted-tile {
+  filter: grayscale(50%) opacity(50%);
+}
