@@ -1,6 +1,6 @@
-import { shuffleArray, getRandomInteger } from "../utils";
+import { shuffleArray, getRandomInteger, chunkArray } from "../utils";
 import { KeyedTileProps, TileProps } from "./tiles/Tile";
-import { fixedTiles, movableTiles } from "./tiles/Tiles";
+import { fixedTiles, movableTiles, Thing, things } from "./tiles/Tiles";
 import { directions, Direction, TileTypes } from "./tiles/TileTypes";
 
 const BoardSize = 7;
@@ -8,6 +8,11 @@ const BoardSize = 7;
 export type BoardState = {
   tiles: readonly KeyedTileProps[][];
   playerTile: KeyedTileProps;
+};
+
+export type PlayerState = {
+  cards: Thing[];
+  foundCards: Thing[];
 };
 
 export type MoveDirection = "left" | "right" | "up" | "down";
@@ -64,6 +69,14 @@ function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, directi
 
     return { ...board, tiles: updatedTiles, playerTile: firstItem };
   }
+}
+
+export function dealCards(players: number): PlayerState[] {
+  if (things.length % players !== 0) {
+    throw new Error("uhhh, players should be an even divisor of thing count");
+  }
+
+  return chunkArray(shuffleArray(things), things.length / players).map((o) => ({ cards: o, foundCards: [] }));
 }
 
 export function getRandomBoardTiles(): BoardState {
@@ -141,7 +154,7 @@ export function getNeighbours(point: Point, height: number, width: number): Neig
  */
 export function getReachableNeighbours(board: Readonly<BoardState>, from: Point) {
   const height = board.tiles.length;
-  const width = height; // todo well this is unfortunate...
+  const width = board.tiles[0].length;
 
   const boardWithRotatedTiles = board.tiles.map((row) => row.map((column) => ({ ...column, openings: getRotatedDirections(column) })));
   const fromTile = boardWithRotatedTiles[from.y][from.x];
