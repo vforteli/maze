@@ -12,3 +12,12 @@ export function shuffleArray<T>(array: readonly T[]): T[] {
 
   return result;
 }
+
+export function chunkArray<T>(array: readonly T[], chunkSize: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+
+  return result;
+}

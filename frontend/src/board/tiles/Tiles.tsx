@@ -44,7 +44,6 @@ export const things = [
   "cat",
   "spider",
   "frog",
-  "spider",
   "whale",
   "zebra",
   "bear",

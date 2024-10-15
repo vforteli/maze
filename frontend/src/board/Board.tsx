@@ -174,7 +174,7 @@ const Board = () => {
                   targetRef={playerTileRef}
                   onAnimationEnd={handleMoveTilesAnimationEnd}
                 >
-                  <div className={index in highlightTiles ? "" : "muted-tile"}>
+                  <div className={index in highlightTiles ? "highlight" : ""}>
                     <TileMemoized {...o} onClick={() => handleTileClick({ x: columnIndex, y: rowIndex })} />
                   </div>
                 </MovableTile>
