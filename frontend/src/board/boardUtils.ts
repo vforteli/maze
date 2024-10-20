@@ -13,6 +13,15 @@ export type BoardState = {
 export type PlayerState = {
   cards: Thing[];
   foundCards: Thing[];
+  startPosition: Point;
+  currentPosition: Point;
+};
+
+export type GameState = {
+  board: BoardState;
+  players: PlayerState[];
+  currentPlayer: number;
+  currentAction: "MovePiece" | "MoveTile";
 };
 
 export type MoveDirection = "left" | "right" | "up" | "down";
@@ -23,6 +32,23 @@ export type Neighbour = { direction: Direction } & Point;
 
 export function moveTiles(board: Readonly<BoardState>, index: number, direction: MoveDirection) {
   return direction === "left" || direction === "right" ? moveRowTilesX(board, index, direction) : moveRowTilesY(board, index, direction);
+}
+
+export function setupGame(players: number): GameState {
+  const startingPositions: Point[] = [
+    { x: 0, y: 0 },
+    { x: 0, y: 6 },
+    { x: 6, y: 0 },
+    { x: 6, y: 6 },
+  ];
+  const game: GameState = {
+    currentPlayer: 0,
+    currentAction: "MoveTile",
+    board: getRandomBoardTiles(),
+    players: dealCards(players).map((o, i) => ({ cards: o, currentPosition: startingPositions[i], foundCards: [], startPosition: startingPositions[i] })),
+  };
+
+  return game;
 }
 
 function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
@@ -71,12 +97,12 @@ function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, directi
   }
 }
 
-export function dealCards(players: number): PlayerState[] {
+export function dealCards(players: number): Thing[][] {
   if (things.length % players !== 0) {
     throw new Error("uhhh, players should be an even divisor of thing count");
   }
 
-  return chunkArray(shuffleArray(things), things.length / players).map((o) => ({ cards: o, foundCards: [] }));
+  return chunkArray(shuffleArray(things), things.length / players);
 }
 
 export function getRandomBoardTiles(): BoardState {

@@ -1,15 +1,12 @@
 import React from "react";
 import { CardMemoized } from "./Card";
 import "./CardStack.scss";
-import { dealCards } from "../boardUtils";
+import { Thing } from "../tiles/Tiles";
 
-const CardStack = () => {
-  // todo well obviously we shouldnt show all the cards at once.. just testing
-  const cards = dealCards(2);
-
+const CardStack = ({ cards }: { cards: Thing[] }) => {
   return (
     <div className="card-stack">
-      {cards[0].cards.map((c) => (
+      {cards.map((c) => (
         <CardMemoized key={c} item={c} />
       ))}
       {/* <CardMemoized item="bunny" />

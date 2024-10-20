@@ -1,7 +1,7 @@
 import "./Board.scss";
 import React, { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
-import { BoardState, getRandomBoardTiles, getReachableTiles, MoveDirection, moveTiles, Point, rotatePlayerTile } from "./boardUtils";
+import { BoardState, getRandomBoardTiles, getReachableTiles, MoveDirection, moveTiles, Point, rotatePlayerTile, setupGame } from "./boardUtils";
 import { CardStackMemoized } from "./cards/CardStack";
 import { animateMany, ChainablePath } from "../utils";
 
@@ -93,7 +93,11 @@ const MovableTile = ({
 };
 
 const Board = () => {
-  const [boardState, setBoardState] = useState(getRandomBoardTiles());
+  // just testing...
+  const foo = setupGame(4);
+  const [boardState, setBoardState] = useState(foo.board);
+  const [playerStates, setPlayerStates] = useState(foo.players);
+
   const [moveIndex, setMoveIndex] = useState<number | undefined>(undefined);
   const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
   const [highlightTiles, setHighlightTiles] = useState<Record<number, number | undefined>>({});
@@ -107,7 +111,11 @@ const Board = () => {
 
   const handleMoveTilesAnimationEnd = () => {
     if (moveIndex !== undefined && moveDirection !== undefined) {
-      setBoardState((b) => moveTiles(b, moveIndex, moveDirection));
+      setBoardState((b) => {
+        const updatedBoard = moveTiles(b, moveIndex, moveDirection);
+        setHighlightTiles(getReachableTiles(updatedBoard, playerStates[0].currentPosition));
+        return updatedBoard;
+      });
     }
 
     setMoveIndex(undefined);
@@ -115,14 +123,13 @@ const Board = () => {
   };
 
   const handleTileClick = (point: Point) => {
-    const reachableTiles = getReachableTiles(boardState, { x: point.x, y: point.y });
+    const reachableTiles = getReachableTiles(boardState, playerStates[0].currentPosition);
     setHighlightTiles(reachableTiles);
-    console.debug(reachableTiles);
   };
 
   return (
     <div className="board-container">
-      <CardStackMemoized />
+      <CardStackMemoized cards={playerStates[0].cards} />
 
       <div className="player-tile-container">
         <div style={{ width: 80, margin: 20 }}>
