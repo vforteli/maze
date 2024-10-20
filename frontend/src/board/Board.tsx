@@ -3,6 +3,7 @@ import React, { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
 import { BoardState, getRandomBoardTiles, getReachableTiles, MoveDirection, moveTiles, Point, rotatePlayerTile } from "./boardUtils";
 import { CardStackMemoized } from "./cards/CardStack";
+import { animateMany, ChainablePath } from "../utils";
 
 const Edge = ({
   moveDirection,
@@ -18,22 +19,27 @@ const Edge = ({
   direction: MoveDirection;
   boardState: BoardState;
   onClick: (i: number, direction: MoveDirection) => void;
-}) => {
-  return (
-    <div className={className}>
-      {[...Array(direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length).keys()].map((i) =>
-        i % 2 !== 0 ? (
-          <div key={i} className="player-tile edge" onClick={() => onClick(i, direction)}>
-            <MovableTile direction={direction} move={false} shift={direction === moveDirection && i === moveIndex} onAnimationEnd={() => {}}>
-              <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
-            </MovableTile>
-          </div>
-        ) : (
-          <div className="edge" key={i} />
-        ),
-      )}
-    </div>
-  );
+}) => (
+  <div className={className}>
+    {[...Array(direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length).keys()].map((i) =>
+      i % 2 !== 0 ? (
+        <div key={i} className="player-tile edge" onClick={() => onClick(i, direction)}>
+          <MovableTile direction={direction} move={false} shift={direction === moveDirection && i === moveIndex} onAnimationEnd={() => {}}>
+            <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
+          </MovableTile>
+        </div>
+      ) : (
+        <div className="edge" key={i} />
+      ),
+    )}
+  </div>
+);
+
+const animationOptions: KeyframeAnimationOptions = {
+  duration: 500,
+  easing: "ease-in-out",
+  composite: "replace",
+  fill: "forwards",
 };
 
 const MovableTile = ({
@@ -52,24 +58,15 @@ const MovableTile = ({
   onAnimationEnd: () => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [path, setPath] = useState<string | undefined>(undefined);
 
   useLayoutEffect(() => {
     if (ref.current !== null) {
       if (shift) {
-        const animationOptions: KeyframeAnimationOptions = {
-          duration: 500,
-          easing: "ease-in-out",
-          composite: "replace",
-          fill: "forwards",
-        };
-
         const currentRect = ref.current.getBoundingClientRect();
 
         // figure out how much the tiles should be moved, the magical number 3 is the grid gap...
         const h_shift = currentRect.width + 2;
         const v_shift = currentRect.height + 2;
-        const distance = direction === "right" || direction === "left" ? h_shift : v_shift;
 
         const dx_shift = direction === "right" ? h_shift : direction === "left" ? -h_shift : 0;
         const dy_shift = direction === "down" ? v_shift : direction === "up" ? -v_shift : 0;
@@ -78,27 +75,18 @@ const MovableTile = ({
         const dx_playertile = targetRect ? targetRect.x - currentRect.x : 0;
         const dy_playertile = targetRect ? targetRect.y - currentRect.y : 0;
 
-        setPath(`path("M0,0 L${dx_shift},${dy_shift} L${dx_playertile},${dy_playertile}")`);
+        const shiftPath: ChainablePath = { options: animationOptions, path: `path("M0,0 L${dx_shift},${dy_shift}")` };
+        const movePath: ChainablePath = { options: animationOptions, path: `path("M${dx_shift},${dy_shift} L${dx_playertile},${dy_playertile}")` };
 
-        ref.current.animate([{ offsetDistance: "0%" }, { offsetDistance: `${distance}px` }], animationOptions).addEventListener(
-          "finish",
-          () => {
-            if (move && ref.current !== null) {
-              ref.current
-                .animate([{ offsetDistance: `${distance}px` }, { offsetDistance: "100%" }], animationOptions)
-                .addEventListener("finish", onAnimationEnd, { once: true });
-            }
-          },
-          { once: true },
-        );
+        move ? animateMany(ref.current, [shiftPath, movePath]).then(onAnimationEnd) : animateMany(ref.current, [shiftPath]);
       } else {
-        setPath(undefined);
+        ref.current.style.offsetPath = "";
       }
     }
   }, [targetRef, ref, shift, move, onAnimationEnd, direction]);
 
   return (
-    <div className="movable-tile" style={{ offsetPath: path }} ref={ref}>
+    <div className="movable-tile" ref={ref}>
       {children}
     </div>
   );
@@ -150,8 +138,8 @@ const Board = () => {
         <Edge className="side top" direction="down" boardState={boardState} moveDirection={moveDirection} moveIndex={moveIndex} onClick={handleMoveTiles} />
         <Edge className="side bottom" direction="up" boardState={boardState} moveDirection={moveDirection} moveIndex={moveIndex} onClick={handleMoveTiles} />
         <div className="board">
-          {boardState.tiles.flatMap((o, rowIndex) =>
-            o.map((o, columnIndex) => {
+          {boardState.tiles.flatMap((tile, rowIndex) =>
+            tile.map((tile, columnIndex) => {
               const shouldShift =
                 ((moveDirection === "up" || moveDirection === "down") && columnIndex === moveIndex) ||
                 ((moveDirection === "left" || moveDirection === "right") && rowIndex === moveIndex);
@@ -175,7 +163,7 @@ const Board = () => {
                   onAnimationEnd={handleMoveTilesAnimationEnd}
                 >
                   <div className={index in highlightTiles ? "highlight" : ""}>
-                    <TileMemoized {...o} onClick={() => handleTileClick({ x: columnIndex, y: rowIndex })} />
+                    <TileMemoized {...tile} onClick={() => handleTileClick({ x: columnIndex, y: rowIndex })} />
                   </div>
                 </MovableTile>
               );

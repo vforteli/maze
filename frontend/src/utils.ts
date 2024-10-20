@@ -21,3 +21,29 @@ export function chunkArray<T>(array: readonly T[], chunkSize: number): T[][] {
 
   return result;
 }
+
+export type ChainablePath = {
+  path: string;
+  options: KeyframeAnimationOptions;
+};
+
+/**
+ * Helper function for animation many consecutive motion paths
+ */
+export async function animateMany(element: HTMLElement, paths: readonly ChainablePath[]) {
+  const runAnimation = (path: ChainablePath): Promise<void> =>
+    new Promise((resolve) => {
+      element.style.offsetPath = path.path;
+      element.animate([{ offsetDistance: "0%" }, { offsetDistance: "100%" }], path.options).addEventListener(
+        "finish",
+        () => {
+          resolve();
+        },
+        { once: true },
+      );
+    });
+
+  for (const path of paths) {
+    await runAnimation(path);
+  }
+}
