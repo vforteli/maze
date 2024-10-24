@@ -41,11 +41,17 @@ export function setupGame(players: number): GameState {
     { x: 6, y: 0 },
     { x: 6, y: 6 },
   ];
+
   const game: GameState = {
     currentPlayer: 0,
     currentAction: "MoveTile",
     board: getRandomBoardTiles(),
-    players: dealCards(players).map((o, i) => ({ cards: o, currentPosition: startingPositions[i], foundCards: [], startPosition: startingPositions[i] })),
+    players: dealCards(players).map((cards, i) => ({
+      cards: cards,
+      currentPosition: startingPositions[i],
+      foundCards: [],
+      startPosition: startingPositions[i],
+    })),
   };
 
   return game;
