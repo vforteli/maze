@@ -57,6 +57,24 @@ export function setupGame(players: number): GameState {
   return game;
 }
 
+export function moveCurrentPlayer(gameState: Readonly<GameState>, to: Point): GameState {
+  const player = gameState.players[gameState.currentPlayer];
+  const reachable = getReachableNeighbours(gameState.board, player.currentPosition).includes(to);
+
+  const updatedPlayers = gameState.players.map((player, i) => (i === gameState.currentPlayer ? { ...player, currentPosition: to } : player));
+
+  if (reachable) {
+    return {
+      ...gameState,
+      currentAction: "MoveTile",
+      currentPlayer: (gameState.currentPlayer + 1) % gameState.players.length,
+      players: updatedPlayers,
+    };
+  }
+
+  throw new Error("uh, thats not a legal move?!");
+}
+
 function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
   const updatedTiles = [...board.tiles];
   const row = board.tiles[rowIndex];
@@ -184,7 +202,7 @@ export function getNeighbours(point: Point, height: number, width: number): Neig
 /**
  * Get reachable neighbours from specified tile
  */
-export function getReachableNeighbours(board: Readonly<BoardState>, from: Point) {
+export function getReachableNeighbours(board: Readonly<BoardState>, from: Point): Point[] {
   const height = board.tiles.length;
   const width = board.tiles[0].length;
 

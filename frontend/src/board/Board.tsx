@@ -1,7 +1,7 @@
 import "./Board.scss";
 import React, { useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
-import { BoardState, getReachableTiles, MoveDirection, moveTiles, Point, rotatePlayerTile, setupGame } from "./boardUtils";
+import { getReachableTiles, MoveDirection, moveTiles, Point, rotatePlayerTile, setupGame } from "./boardUtils";
 import { CardStackMemoized } from "./cards/CardStack";
 import { MovableTile } from "./tiles/MovableTile";
 import { Edge } from "./Edge";
