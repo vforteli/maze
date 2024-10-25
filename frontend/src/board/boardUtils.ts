@@ -1,7 +1,7 @@
 import { shuffleArray, getRandomInteger, chunkArray } from "../utils";
-import { KeyedTileProps, TileProps } from "./tiles/Tile";
+import { KeyedTileProps, TileKey, TileProps } from "./tiles/Tile";
 import { fixedTiles, movableTiles, Thing, things } from "./tiles/Tiles";
-import { directions, Direction, TileTypes } from "./tiles/TileTypes";
+import { directions, Direction, TileTypes, TileType } from "./tiles/TileTypes";
 
 const BoardSize = 7;
 
@@ -15,15 +15,19 @@ export type BoardState = {
 export type PlayerState = {
   cards: Thing[];
   foundCards: Thing[];
-  startPosition: Point;
-  currentPosition: Point;
+  startPosition: TileKey;
+  currentPosition: TileKey;
+};
+
+export type TurnState = {
+  currentPlayer: number;
+  currentAction: "MovePiece" | "MoveTile";
 };
 
 export type GameState = {
   board: BoardState;
   players: PlayerState[];
-  currentPlayer: number;
-  currentAction: "MovePiece" | "MoveTile";
+  turn: TurnState;
 };
 
 export type MoveDirection = "left" | "right" | "up" | "down";
@@ -32,27 +36,43 @@ export type Point = { x: number; y: number };
 
 export type Neighbour = { direction: Direction } & Point;
 
-export function moveTiles(board: Readonly<BoardState>, index: number, direction: MoveDirection) {
-  return direction === "left" || direction === "right" ? moveRowTilesX(board, index, direction) : moveRowTilesY(board, index, direction);
+export function moveTiles(gameState: GameState, index: number, direction: MoveDirection): GameState {
+  const previousPlayerTileKey = gameState.board.playerTile.id; // keep track of the previous player tile in case someone gets pushed off the board
+
+  const updatedBoard =
+    direction === "left" || direction === "right" ? moveRowTilesX(gameState.board, index, direction) : moveRowTilesY(gameState.board, index, direction);
+
+  const updatedPlayers = gameState.players.map((o) => ({
+    ...o,
+    currentPosition: o.currentPosition === updatedBoard.playerTile.id ? previousPlayerTileKey : o.currentPosition,
+  }));
+
+  return { ...gameState, board: updatedBoard, players: updatedPlayers };
 }
 
 export function setupGame(players: number): GameState {
   const startingPositions: Point[] = [
     { x: 0, y: 0 },
-    { x: 0, y: 6 },
     { x: 6, y: 0 },
     { x: 6, y: 6 },
+    { x: 0, y: 6 },
   ];
 
+  const board = getRandomBoardTiles();
+
+  const startintPositionsTileKeys = startingPositions.map((p) => board.tiles[p.y][p.x].id);
+
   const game: GameState = {
-    currentPlayer: 0,
-    currentAction: "MoveTile",
-    board: getRandomBoardTiles(),
+    turn: {
+      currentAction: "MoveTile",
+      currentPlayer: 0,
+    },
+    board: board,
     players: dealCards(players).map((cards, i) => ({
       cards: cards,
-      currentPosition: startingPositions[i],
+      currentPosition: startintPositionsTileKeys[i],
       foundCards: [],
-      startPosition: startingPositions[i],
+      startPosition: startintPositionsTileKeys[i],
     })),
   };
 
@@ -60,20 +80,21 @@ export function setupGame(players: number): GameState {
 }
 
 export function moveCurrentPlayer(gameState: Readonly<GameState>, to: Point): GameState {
-  const player = gameState.players[gameState.currentPlayer];
-  console.debug(player);
-  const reachableTiles = getReachableTiles(gameState.board.tiles, player.currentPosition);
-  console.debug(reachableTiles);
-  console.debug(to);
-  const reachable = to.y * 7 + to.x in reachableTiles;
+  const player = gameState.players[gameState.turn.currentPlayer];
+  const reachable = to.y * 7 + to.x in getReachableTiles(gameState.board.tiles, player.currentPosition);
 
-  const updatedPlayers = gameState.players.map((player, i) => (i === gameState.currentPlayer ? { ...player, currentPosition: to } : player));
+  const updatedPlayers: PlayerState[] = gameState.players.map((player, i) =>
+    i === gameState.turn.currentPlayer ? { ...player, currentPosition: gameState.board.tiles[to.y][to.x].id } : player,
+  );
+  const updateTurn: TurnState = {
+    currentAction: "MoveTile",
+    currentPlayer: (gameState.turn.currentPlayer + 1) % gameState.players.length,
+  };
 
   if (reachable) {
     return {
       ...gameState,
-      currentAction: "MoveTile",
-      currentPlayer: (gameState.currentPlayer + 1) % gameState.players.length,
+      turn: updateTurn,
       players: updatedPlayers,
     };
   }
@@ -81,7 +102,7 @@ export function moveCurrentPlayer(gameState: Readonly<GameState>, to: Point): Ga
   throw new Error("uh, thats not a legal move?!");
 }
 
-export function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
+function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
   const updatedTiles = [...board.tiles];
   const row = board.tiles[rowIndex];
   const updatedRow = [...row];
@@ -101,7 +122,7 @@ export function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, dir
   }
 }
 
-export function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, direction: "up" | "down"): BoardState {
+function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, direction: "up" | "down"): BoardState {
   const updatedTiles = board.tiles.map((row) => [...row]);
 
   if (direction === "down") {
@@ -208,7 +229,7 @@ export function getNeighbours(point: Point, height: number, width: number): Neig
 /**
  * Get reachable neighbours from specified tile
  */
-export function getReachableNeighbours(tiles: readonly KeyedTileProps[][], from: Point): Point[] {
+export function getReachableNeighbours(tiles: TilesType, from: Point): Point[] {
   const height = tiles.length;
   const width = tiles[0].length;
 
@@ -223,8 +244,10 @@ export function getReachableNeighbours(tiles: readonly KeyedTileProps[][], from:
 /**
  * Get all tiles reachable from specified tile
  */
-export function getReachableTiles(tiles: readonly KeyedTileProps[][], from: Point) {
-  const height = tiles.length;
+export function getReachableTiles(tiles: TilesType, fromKey: TileKey) {
+  const from = getPointFromId(tiles, fromKey);
+  // todo calculate orientations once here...
+
   const width = tiles[0].length;
 
   const pointToIndex = (point: Point) => point.y * width + point.x;
@@ -250,3 +273,23 @@ export function getReachableTiles(tiles: readonly KeyedTileProps[][], from: Poin
 
   return closedSet;
 }
+
+export function getPointFromId(tiles: TilesType, id: TileKey): Point {
+  const item = tiles.flatMap((row, y) => row.map((value, x) => ({ x, y, value }))).find((o) => o.value.id === id);
+
+  if (item === undefined) {
+    throw new Error("uh what? tile key not found?");
+  }
+
+  return { x: item.x, y: item.y };
+}
+
+export const shouldShift = (moveDirection: MoveDirection | undefined, moveIndex: number | undefined, columnIndex: number, rowIndex: number) =>
+  ((moveDirection === "up" || moveDirection === "down") && columnIndex === moveIndex) ||
+  ((moveDirection === "left" || moveDirection === "right") && rowIndex === moveIndex);
+
+export const shouldMove = (moveDirection: MoveDirection | undefined, moveIndex: number | undefined, columnIndex: number, rowIndex: number) =>
+  (shouldShift(moveDirection, moveIndex, columnIndex, rowIndex) && moveDirection === "up" && rowIndex === 0) ||
+  (moveDirection === "down" && rowIndex === 6) ||
+  (moveDirection === "left" && columnIndex === 0) ||
+  (moveDirection === "right" && columnIndex === 6);

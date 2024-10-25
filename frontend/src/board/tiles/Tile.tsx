@@ -2,20 +2,26 @@ import "./Tile.scss";
 import React, { ReactNode } from "react";
 import { TileType, Direction } from "./TileTypes";
 
+export type TileKey = number;
+
 export type TileProps = {
   type: TileType;
   rotation: Direction;
   content?: ReactNode | undefined;
   onClick?: () => void;
+  player?: number;
 };
 
 export type KeyedTileProps = TileProps & {
-  id: number;
+  id: TileKey;
 };
 
 const Tile: React.FC<TileProps> = (props) => (
   <div className="tile-container" onClick={props.onClick}>
-    <div className="content">{props.content}</div>
+    <div className="content">
+      {props.player}
+      {props.content}
+    </div>
     <div className="tile" style={{ transform: `rotate(${props.rotation}deg)` }}>
       <TileBackground type={props.type} />
     </div>

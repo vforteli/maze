@@ -1,6 +1,7 @@
 import { RefObject, useLayoutEffect, useRef } from "react";
 import { MoveDirection } from "../boardUtils";
 import { animateMany, ChainablePath } from "../../utils";
+import React from "react";
 
 const animationOptions: KeyframeAnimationOptions = {
   duration: 500,
@@ -15,10 +16,10 @@ export type MovableTileProps = {
   direction: MoveDirection | undefined;
   targetRef?: RefObject<HTMLDivElement>;
   children: React.ReactNode;
-  onAnimationEnd: () => void;
+  onAnimationEnd?: () => void;
 };
 
-export const MovableTile = ({ shift, move, targetRef, children, direction, onAnimationEnd }: MovableTileProps) => {
+const MovableTile = ({ shift, move, targetRef, children, direction, onAnimationEnd }: MovableTileProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -53,3 +54,5 @@ export const MovableTile = ({ shift, move, targetRef, children, direction, onAni
     </div>
   );
 };
+
+export const MovableTileMemoized = React.memo(MovableTile);

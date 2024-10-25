@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { BoardState, getNeighbours, getRandomBoardTiles, getRotatedDirections, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
+import { BoardState, GameState, getNeighbours, getRandomBoardTiles, getRotatedDirections, moveTiles, rotatePlayerTile, rotateRight } from "./boardUtils";
 import * as utils from "../utils";
 
 const createMockBoardState = (): BoardState => ({
@@ -23,24 +23,30 @@ const createMockBoardState = (): BoardState => ({
   ],
 });
 
+const createMockGameState = (): GameState => ({
+  board: createMockBoardState(),
+  players: [],
+  turn: { currentAction: "MoveTile", currentPlayer: 0 },
+});
+
 describe("moveTiles", () => {
   test("moveRight", () => {
-    const actual = moveTiles(createMockBoardState(), 1, "right");
+    const actual = moveTiles(createMockGameState(), 1, "right");
     expect(actual).toMatchSnapshot();
   });
 
   test("moveLeft", () => {
-    const actual = moveTiles(createMockBoardState(), 1, "left");
+    const actual = moveTiles(createMockGameState(), 1, "left");
     expect(actual).toMatchSnapshot();
   });
 
   test("moveUp", () => {
-    const actual = moveTiles(createMockBoardState(), 1, "up");
+    const actual = moveTiles(createMockGameState(), 1, "up");
     expect(actual).toMatchSnapshot();
   });
 
   test("moveDown", () => {
-    const actual = moveTiles(createMockBoardState(), 1, "down");
+    const actual = moveTiles(createMockGameState(), 1, "down");
     expect(actual).toMatchSnapshot();
   });
 });

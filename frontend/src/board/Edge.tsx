@@ -1,5 +1,5 @@
 import { BoardState, MoveDirection } from "./boardUtils";
-import { MovableTile } from "./tiles/MovableTile";
+import { MovableTileMemoized } from "./tiles/MovableTile";
 import { TileMemoized } from "./tiles/Tile";
 
 export type EdgeProps = {
@@ -16,9 +16,9 @@ export const Edge = ({ moveDirection, moveIndex, boardState, onClick, className,
     {[...Array(direction === "down" || direction === "up" ? boardState.tiles.length : boardState.tiles[0].length).keys()].map((i) =>
       i % 2 !== 0 ? (
         <div key={i} className="player-tile edge" onClick={() => onClick(i, direction)}>
-          <MovableTile direction={direction} move={false} shift={direction === moveDirection && i === moveIndex} onAnimationEnd={() => {}}>
+          <MovableTileMemoized direction={direction} move={false} shift={direction === moveDirection && i === moveIndex} onAnimationEnd={() => {}}>
             <TileMemoized {...boardState.playerTile} key={boardState.playerTile.id} />
-          </MovableTile>
+          </MovableTileMemoized>
         </div>
       ) : (
         <div className="edge" key={i} />

@@ -93,10 +93,10 @@ export const ThingIcons: Record<Thing, React.ReactElement> = {
  * These are the fixed tiles which cannot be moved
  */
 export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
-  { type: "L", rotation: 90, content: <StartingTileMemoized color="green" />, x: 0, y: 0 },
+  { type: "L", rotation: 90, content: <StartingTileMemoized color="darkorange" />, x: 0, y: 0 },
   { type: "T", rotation: 180, content: <ItemTileMemoized item="cow" />, x: 2, y: 0 },
   { type: "T", rotation: 180, content: <ItemTileMemoized item="raccoon" />, x: 4, y: 0 },
-  { type: "L", rotation: 180, content: <StartingTileMemoized color="red" />, x: 6, y: 0 },
+  { type: "L", rotation: 180, content: <StartingTileMemoized color="magenta" />, x: 6, y: 0 },
 
   { type: "T", rotation: 90, content: <ItemTileMemoized item="fox" />, x: 0, y: 2 },
   { type: "T", rotation: 90, content: <ItemTileMemoized item="hedgehog" />, x: 2, y: 2 },
@@ -108,7 +108,7 @@ export const fixedTiles: readonly (TileProps & FixedTileCoordinates)[] = [
   { type: "T", rotation: 270, content: <ItemTileMemoized item="bear" />, x: 4, y: 4 },
   { type: "T", rotation: 270, content: <ItemTileMemoized item="crab" />, x: 6, y: 4 },
 
-  { type: "L", rotation: 0, content: <StartingTileMemoized color="blue" />, x: 0, y: 6 },
+  { type: "L", rotation: 0, content: <StartingTileMemoized color="cyan" />, x: 0, y: 6 },
   { type: "T", rotation: 0, content: <ItemTileMemoized item="turtle" />, x: 2, y: 6 },
   { type: "T", rotation: 0, content: <ItemTileMemoized item="jellyfish" />, x: 4, y: 6 },
   { type: "L", rotation: 270, content: <StartingTileMemoized color="yellow" />, x: 6, y: 6 },
