@@ -5,8 +5,10 @@ import { directions, Direction, TileTypes } from "./tiles/TileTypes";
 
 const BoardSize = 7;
 
+export type TilesType = readonly KeyedTileProps[][];
+
 export type BoardState = {
-  tiles: readonly KeyedTileProps[][];
+  tiles: TilesType;
   playerTile: KeyedTileProps;
 };
 
@@ -59,7 +61,11 @@ export function setupGame(players: number): GameState {
 
 export function moveCurrentPlayer(gameState: Readonly<GameState>, to: Point): GameState {
   const player = gameState.players[gameState.currentPlayer];
-  const reachable = getReachableNeighbours(gameState.board, player.currentPosition).includes(to);
+  console.debug(player);
+  const reachableTiles = getReachableTiles(gameState.board.tiles, player.currentPosition);
+  console.debug(reachableTiles);
+  console.debug(to);
+  const reachable = to.y * 7 + to.x in reachableTiles;
 
   const updatedPlayers = gameState.players.map((player, i) => (i === gameState.currentPlayer ? { ...player, currentPosition: to } : player));
 
@@ -75,7 +81,7 @@ export function moveCurrentPlayer(gameState: Readonly<GameState>, to: Point): Ga
   throw new Error("uh, thats not a legal move?!");
 }
 
-function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
+export function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction: "left" | "right"): BoardState {
   const updatedTiles = [...board.tiles];
   const row = board.tiles[rowIndex];
   const updatedRow = [...row];
@@ -95,7 +101,7 @@ function moveRowTilesX(board: Readonly<BoardState>, rowIndex: number, direction:
   }
 }
 
-function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, direction: "up" | "down"): BoardState {
+export function moveRowTilesY(board: Readonly<BoardState>, columnIndex: number, direction: "up" | "down"): BoardState {
   const updatedTiles = board.tiles.map((row) => [...row]);
 
   if (direction === "down") {
@@ -202,11 +208,11 @@ export function getNeighbours(point: Point, height: number, width: number): Neig
 /**
  * Get reachable neighbours from specified tile
  */
-export function getReachableNeighbours(board: Readonly<BoardState>, from: Point): Point[] {
-  const height = board.tiles.length;
-  const width = board.tiles[0].length;
+export function getReachableNeighbours(tiles: readonly KeyedTileProps[][], from: Point): Point[] {
+  const height = tiles.length;
+  const width = tiles[0].length;
 
-  const boardWithRotatedTiles = board.tiles.map((row) => row.map((column) => ({ ...column, openings: getRotatedDirections(column) })));
+  const boardWithRotatedTiles = tiles.map((row) => row.map((column) => ({ ...column, openings: getRotatedDirections(column) })));
   const fromTile = boardWithRotatedTiles[from.y][from.x];
 
   return getNeighbours(from, height, width).filter(
@@ -217,18 +223,16 @@ export function getReachableNeighbours(board: Readonly<BoardState>, from: Point)
 /**
  * Get all tiles reachable from specified tile
  */
-export function getReachableTiles(board: Readonly<BoardState>, from: Point) {
-  // todo calculate orientations once here...
-  // todo well this is unfortunate... fix..
-  const height = board.tiles.length;
-  const width = height;
+export function getReachableTiles(tiles: readonly KeyedTileProps[][], from: Point) {
+  const height = tiles.length;
+  const width = tiles[0].length;
 
   const pointToIndex = (point: Point) => point.y * width + point.x;
 
   const closedSet: Record<number, number | undefined> = {}; // this is not dijkstra or a*, we dont care about distance
 
-  const getReachableTilesRecursive = (board: Readonly<BoardState>, from: Point) => {
-    for (const currentTile of getReachableNeighbours(board, from)) {
+  const getReachableTilesRecursive = (tiles: readonly KeyedTileProps[][], from: Point) => {
+    for (const currentTile of getReachableNeighbours(tiles, from)) {
       const currentKey = pointToIndex(currentTile);
 
       if (currentKey in closedSet) {
@@ -236,13 +240,13 @@ export function getReachableTiles(board: Readonly<BoardState>, from: Point) {
       }
 
       closedSet[currentKey] = pointToIndex(from);
-      getReachableTilesRecursive(board, currentTile);
+      getReachableTilesRecursive(tiles, currentTile);
     }
   };
 
   closedSet[pointToIndex(from)] = undefined;
 
-  getReachableTilesRecursive(board, from);
+  getReachableTilesRecursive(tiles, from);
 
   return closedSet;
 }
