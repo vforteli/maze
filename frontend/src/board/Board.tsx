@@ -1,5 +1,5 @@
 import "./Board.scss";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { TileMemoized } from "./tiles/Tile";
 import {
   GameState,
@@ -16,12 +16,26 @@ import {
 import { CardStackMemoized } from "./cards/CardStack";
 import { MovableTileMemoized } from "./tiles/MovableTile";
 import { Edge } from "./Edge";
+import { useMazeHub } from "../mazehub/useMazeHub";
 
 const Board = () => {
+  const mazeHub = useMazeHub();
   const [game, setGameState] = useState(setupGame(4));
   const [moveIndex, setMoveIndex] = useState<number | undefined>(undefined);
   const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
   const [highlightTiles, setHighlightTiles] = useState<Record<number, number | undefined>>({});
+
+  const handleSomethingHappened = useCallback((message: string) => {
+    console.debug("board: " + message);
+  }, []);
+
+  useEffect(() => {
+    mazeHub.hub.addSomethingHappenedHandler(handleSomethingHappened);
+
+    return () => {
+      mazeHub.hub.removeSomethingHappened(handleSomethingHappened);
+    };
+  }, [handleSomethingHappened, mazeHub.hub]);
 
   const playerTileRef = useRef<HTMLDivElement>(null);
 
@@ -57,8 +71,13 @@ const Board = () => {
     setGameState((s) => ({ ...s, board: rotatePlayerTile(s.board) }));
   };
 
+  const doStuff = () => {
+    mazeHub.hub.sendMessage("hello from board!");
+  };
+
   return (
     <div className="board-container">
+      <button onClick={doStuff}>Do stuff</button>
       <CardStackMemoized cards={game.players[0].cards} />
 
       <div className="player-tile-container">

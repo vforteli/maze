@@ -41,7 +41,11 @@ const MovableTile = ({ shift, move, targetRef, children, direction, onAnimationE
         const shiftPath: ChainablePath = { options: animationOptions, path: `path("M0,0 L${dx_shift},${dy_shift}")` };
         const movePath: ChainablePath = { options: animationOptions, path: `path("M${dx_shift},${dy_shift} L${dx_playertile},${dy_playertile}")` };
 
-        move ? animateMany(ref.current, [shiftPath, movePath]).then(onAnimationEnd) : animateMany(ref.current, [shiftPath]);
+        if (move) {
+          animateMany(ref.current, [shiftPath, movePath]).then(onAnimationEnd);
+        } else {
+          animateMany(ref.current, [shiftPath]);
+        }
       } else {
         ref.current.style.offsetPath = "";
       }
