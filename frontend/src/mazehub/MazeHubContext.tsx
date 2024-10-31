@@ -1,17 +1,23 @@
-import { HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
+import { HttpTransportType, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { createContext, FC, ReactNode, useEffect, useRef } from "react";
-import { MessageHubClient as MazeHubClient, MessageHubClient } from "./hubclient";
+import { MazeHubClient } from "../generated/hubs/MazeHubClient";
 
 const url = "http://localhost:5042/maze";
 
 type MazeHubContextProps = {
-  hub: MessageHubClient;
+  hub: MazeHubClient;
 };
 
 export const MazeHubContext = createContext<MazeHubContextProps | undefined>(undefined);
 
 export const MazeHubContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const messageHubClient = useRef(new MazeHubClient(new HubConnectionBuilder().configureLogging(LogLevel.Debug).withAutomaticReconnect().withUrl(url).build()));
+  const hubConnection = new HubConnectionBuilder()
+    .configureLogging(LogLevel.Debug)
+    .withAutomaticReconnect()
+    .withUrl(url, { skipNegotiation: true, transport: HttpTransportType.WebSockets })
+    .build();
+
+  const messageHubClient = useRef(new MazeHubClient(hubConnection));
 
   useEffect(() => {
     if (messageHubClient.current.connection.state === HubConnectionState.Disconnected) {

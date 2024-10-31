@@ -7,15 +7,15 @@ import { useMazeHub } from "../../mazehub/useMazeHub";
 const CardStack = ({ cards }: { cards: Thing[] }) => {
   const mazeHub = useMazeHub();
 
-  const handleSomethingHappened = useCallback((message: string) => {
+  const handleSomethingHappened = useCallback((message: string | null) => {
     console.debug("cardstack: " + message);
   }, []);
 
   useEffect(() => {
-    mazeHub.hub.addSomethingHappenedHandler(handleSomethingHappened);
+    mazeHub.hub.addsomethingHappenedHandler(handleSomethingHappened);
 
     return () => {
-      mazeHub.hub.removeSomethingHappened(handleSomethingHappened);
+      mazeHub.hub.removesomethingHappenedHandler(handleSomethingHappened);
     };
   }, [handleSomethingHappened, mazeHub.hub]);
 

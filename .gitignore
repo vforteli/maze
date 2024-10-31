@@ -252,6 +252,5 @@ FakesAssemblies/
 _Pvt_Extensions
 .DS_Store
 
-SearchIndexerTest/appsettings.json
+appsettings.json
 .vscode/
-finbert-ner-onnx

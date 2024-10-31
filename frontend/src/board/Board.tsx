@@ -25,17 +25,23 @@ const Board = () => {
   const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
   const [highlightTiles, setHighlightTiles] = useState<Record<number, number | undefined>>({});
 
-  const handleSomethingHappened = useCallback((message: string) => {
+  const handleSomethingHappened = useCallback((message: string | null) => {
     console.debug("board: " + message);
   }, []);
 
+  const handleSomethingHappenedModel = useCallback((item: unknown) => {
+    console.dir(item);
+  }, []);
+
   useEffect(() => {
-    mazeHub.hub.addSomethingHappenedHandler(handleSomethingHappened);
+    mazeHub.hub.addsomethingHappenedHandler(handleSomethingHappened);
+    mazeHub.hub.addsomethingHappenedModelHandler(handleSomethingHappenedModel);
 
     return () => {
-      mazeHub.hub.removeSomethingHappened(handleSomethingHappened);
+      mazeHub.hub.removesomethingHappenedHandler(handleSomethingHappened);
+      mazeHub.hub.removesomethingHappenedModelHandler(handleSomethingHappenedModel);
     };
-  }, [handleSomethingHappened, mazeHub.hub]);
+  }, [handleSomethingHappened, handleSomethingHappenedModel, mazeHub.hub]);
 
   const playerTileRef = useRef<HTMLDivElement>(null);
 
@@ -72,12 +78,17 @@ const Board = () => {
   };
 
   const doStuff = () => {
-    mazeHub.hub.sendMessage("hello from board!");
+    mazeHub.hub.sendMessage({ message: "hello from board!", someId: 7 });
+  };
+
+  const sendEvent = () => {
+    mazeHub.hub.doStuff(42, 42);
   };
 
   return (
     <div className="board-container">
       <button onClick={doStuff}>Do stuff</button>
+      <button onClick={sendEvent}>send event</button>
       <CardStackMemoized cards={game.players[0].cards} />
 
       <div className="player-tile-container">
