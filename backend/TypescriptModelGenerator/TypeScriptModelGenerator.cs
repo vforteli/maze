@@ -17,6 +17,7 @@ public static class TypeScriptModelGenerator
     /// <summary>
     /// Parse a method parameter and return its typescript type
     /// </summary>
+    /// <returns>Either the primitive typescript type, or the name of complex type created</returns>
     public static string ParseParameterInfo(ParameterInfo parameterInfo, Dictionary<string, string> processedTypes) =>
         ParseType(parameterInfo.ParameterType, processedTypes,
             NullabilityInfoContext.Create(parameterInfo).WriteState is NullabilityState.Nullable);
@@ -25,6 +26,7 @@ public static class TypeScriptModelGenerator
     /// <summary>
     /// Parse a property and return its typescript type
     /// </summary>
+    /// <returns>Either the primitive typescript type, or the name of complex type created</returns>
     private static string ParsePropertyInfo(PropertyInfo propertyInfo, Dictionary<string, string> processedTypes) =>
         ParseType(propertyInfo.PropertyType, processedTypes,
             NullabilityInfoContext.Create(propertyInfo).WriteState is NullabilityState.Nullable);
@@ -33,9 +35,6 @@ public static class TypeScriptModelGenerator
     /// <summary>
     /// Parse a type and return its typescript type
     /// </summary>
-    /// <param name="inputType"></param>
-    /// <param name="processedTypes"></param>
-    /// <param name="nullableRefType">Indicate if this is a nullable reference type, in eg a method or property</param>
     /// <returns>Either the primitive typescript type, or the name of complex type created</returns>
     public static string ParseType(
         Type inputType,
