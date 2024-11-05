@@ -12,10 +12,10 @@ const CardStack = ({ cards }: { cards: Thing[] }) => {
   }, []);
 
   useEffect(() => {
-    mazeHub.hub.addsomethingHappenedHandler(handleSomethingHappened);
+    mazeHub.hub.addSomethingHappenedHandler(handleSomethingHappened);
 
     return () => {
-      mazeHub.hub.removesomethingHappenedHandler(handleSomethingHappened);
+      mazeHub.hub.removeSomethingHappenedHandler(handleSomethingHappened);
     };
   }, [handleSomethingHappened, mazeHub.hub]);
 

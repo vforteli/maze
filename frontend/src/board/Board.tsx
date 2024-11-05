@@ -34,12 +34,12 @@ const Board = () => {
   }, []);
 
   useEffect(() => {
-    mazeHub.hub.addsomethingHappenedHandler(handleSomethingHappened);
-    mazeHub.hub.addsomethingHappenedModelHandler(handleSomethingHappenedModel);
+    mazeHub.hub.addSomethingHappenedHandler(handleSomethingHappened);
+    mazeHub.hub.addSomethingHappenedModelHandler(handleSomethingHappenedModel);
 
     return () => {
-      mazeHub.hub.removesomethingHappenedHandler(handleSomethingHappened);
-      mazeHub.hub.removesomethingHappenedModelHandler(handleSomethingHappenedModel);
+      mazeHub.hub.removeSomethingHappenedHandler(handleSomethingHappened);
+      mazeHub.hub.removeSomethingHappenedModelHandler(handleSomethingHappenedModel);
     };
   }, [handleSomethingHappened, handleSomethingHappenedModel, mazeHub.hub]);
 

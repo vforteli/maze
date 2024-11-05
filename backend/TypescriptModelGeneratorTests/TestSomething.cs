@@ -52,11 +52,12 @@ public class TestSomething
     {
         var actual = TestConvertSingleType(typeof(NullableBooleanModel));
 
-        const string expected = """
-                                export type NullableBooleanModel = {
-                                  someNullableBoolean: boolean | null,
-                                }
-                                """;
+        const string expected =
+            """
+            export type NullableBooleanModel = {
+              someNullableBoolean: boolean | null;
+            };
+            """;
 
         Assert.That(actual, Is.EqualTo(expected));
     }
@@ -67,15 +68,16 @@ public class TestSomething
     {
         var actual = TestConvertSingleType(typeof(TypesModel));
 
-        const string expected = """
-                                export type TypesModel = {
-                                  someBoolean: boolean,
-                                  someString: string,
-                                  someInt: number,
-                                  someDateTime: string,
-                                  someDateTimeOffset: string,
-                                }
-                                """;
+        const string expected =
+            """
+            export type TypesModel = {
+              someBoolean: boolean;
+              someString: string;
+              someInt: number;
+              someDateTime: string;
+              someDateTimeOffset: string;
+            };
+            """;
 
         Assert.That(actual, Is.EqualTo(expected));
     }
@@ -86,15 +88,16 @@ public class TestSomething
     {
         var actual = TestConvertSingleType(typeof(NullableTypesModel));
 
-        const string expected = """
-                                export type NullableTypesModel = {
-                                  someNullableBoolean: boolean | null,
-                                  someNullableString: string | null,
-                                  someNullableInt: number | null,
-                                  someNullableDateTime: string | null,
-                                  someNullableDateTimeOffset: string | null,
-                                }
-                                """;
+        const string expected =
+            """
+            export type NullableTypesModel = {
+              someNullableBoolean: boolean | null;
+              someNullableString: string | null;
+              someNullableInt: number | null;
+              someNullableDateTime: string | null;
+              someNullableDateTimeOffset: string | null;
+            };
+            """;
 
         Assert.That(actual, Is.EqualTo(expected));
     }
@@ -105,23 +108,25 @@ public class TestSomething
         var types = new Dictionary<string, string>();
         TypeScriptModelGenerator.ConvertRecursive(typeof(NestedTypesModel), types);
 
-        const string expectedType = """
-                                    export type NestedTypesModel = {
-                                      someNullableBoolean: boolean,
-                                      types: TypesModel,
-                                      alsoTypesNullable: TypesModel | null,
-                                    }
-                                    """;
+        const string expectedType =
+            """
+            export type NestedTypesModel = {
+              someNullableBoolean: boolean;
+              types: TypesModel;
+              alsoTypesNullable: TypesModel | null;
+            };
+            """;
 
-        const string expectedNestedType = """
-                                          export type TypesModel = {
-                                            someBoolean: boolean,
-                                            someString: string,
-                                            someInt: number,
-                                            someDateTime: string,
-                                            someDateTimeOffset: string,
-                                          }
-                                          """;
+        const string expectedNestedType =
+            """
+            export type TypesModel = {
+              someBoolean: boolean;
+              someString: string;
+              someInt: number;
+              someDateTime: string;
+              someDateTimeOffset: string;
+            };
+            """;
 
         Assert.Multiple(() =>
         {
@@ -137,21 +142,23 @@ public class TestSomething
         var types = new Dictionary<string, string>();
         TypeScriptModelGenerator.ConvertRecursive(typeof(TypeWithList), types);
 
-        const string expectedTypesModel = """
-                                          export type TypesModel = {
-                                            someBoolean: boolean,
-                                            someString: string,
-                                            someInt: number,
-                                            someDateTime: string,
-                                            someDateTimeOffset: string,
-                                          }
-                                          """;
+        const string expectedTypesModel =
+            """
+            export type TypesModel = {
+              someBoolean: boolean;
+              someString: string;
+              someInt: number;
+              someDateTime: string;
+              someDateTimeOffset: string;
+            };
+            """;
 
-        const string expectedTypeWithListModel = """
-                                                 export type TypeWithList = {
-                                                   typesList: TypesModel[],
-                                                 }
-                                                 """;
+        const string expectedTypeWithListModel =
+            """
+            export type TypeWithList = {
+              typesList: TypesModel[];
+            };
+            """;
 
         Assert.Multiple(() =>
         {

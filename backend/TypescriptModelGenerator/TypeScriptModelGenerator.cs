@@ -5,11 +5,12 @@ namespace TypescriptModelGenerator;
 
 public static class TypeScriptModelGenerator
 {
-    private const string TypeTemplate = """
-                                        export type {{typeName}} = {
-                                        {{properties}}
-                                        }
-                                        """;
+    private const string TypeTemplate =
+        """
+        export type {{typeName}} = {
+        {{properties}}
+        };
+        """;
 
     private static readonly NullabilityInfoContext NullabilityInfoContext = new NullabilityInfoContext();
 
@@ -73,7 +74,7 @@ public static class TypeScriptModelGenerator
         }
 
         var tsProperties = model.GetProperties()
-            .Select(p => $"  {p.Name.ToCamelCase()}: {ParsePropertyInfo(p, processedTypes)},");
+            .Select(p => $"  {p.Name.ToCamelCase()}: {ParsePropertyInfo(p, processedTypes)};");
 
         var tsTypeDefinition = TypeTemplate
             .Replace("{{properties}}", string.Join("\n", tsProperties))

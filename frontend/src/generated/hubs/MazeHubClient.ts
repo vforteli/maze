@@ -1,30 +1,30 @@
 import type { HubConnection } from "@microsoft/signalr";
 
 export type DoStuffObjectModel = {
-  someBoolean: boolean,
-  someNullableBoolean: boolean | null,
-  someString: string,
-  someNullableString: string | null,
-  someInt: number,
-  someNullableInt: number | null,
-  someDateTime: string,
-  someNullableDateTime: string | null,
-}
+  someBoolean: boolean;
+  someNullableBoolean: boolean | null;
+  someString: string;
+  someNullableString: string | null;
+  someInt: number;
+  someNullableInt: number | null;
+  someDateTime: string;
+  someNullableDateTime: string | null;
+};
 
 export type SendMessageModel = {
-  message: string,
-  someId: number,
-}
+  message: string;
+  someId: number;
+};
 
 export type SendMessageResponseModel = {
-  someId: number,
-  status: string,
-}
+  someId: number;
+  status: string;
+};
 
 export type EventThingy = {
-  eventName: string,
-  eventType: string,
-}
+  eventName: string;
+  eventType: string;
+};
 
 export class MazeHubClient {
   readonly connection: HubConnection;
@@ -32,7 +32,7 @@ export class MazeHubClient {
   constructor(hubConnection: HubConnection) {
     this.connection = hubConnection;
   }
- 
+
   async doStuffObject(someObject: DoStuffObjectModel) {
     await this.connection.invoke<DoStuffObjectModel>("doStuffObject", someObject);
   }
@@ -67,37 +67,37 @@ export class MazeHubClient {
 
   async sendSomeList(list: EventThingy[]) {
     await this.connection.invoke<EventThingy[]>("sendSomeList", list);
-  } 
+  }
 
-  addpongHandler(callback: (message: string) => void): void {
+  addPongHandler(callback: (message: string) => void): void {
     this.connection.on("somethingHappened", callback);
   }
 
-  removepongHandler(callback: (message: string) => void): void {
+  removePongHandler(callback: (message: string) => void): void {
     this.connection.off("somethingHappened", callback);
   }
 
-  addsomethingHappenedHandler(callback: (message: string | null) => void): void {
+  addSomethingHappenedHandler(callback: (message: string | null) => void): void {
     this.connection.on("somethingHappened", callback);
   }
 
-  removesomethingHappenedHandler(callback: (message: string | null) => void): void {
+  removeSomethingHappenedHandler(callback: (message: string | null) => void): void {
     this.connection.off("somethingHappened", callback);
   }
 
-  addsomethingHappenedModelHandler(callback: (someEvent: EventThingy) => void): void {
+  addSomethingHappenedModelHandler(callback: (someEvent: EventThingy) => void): void {
     this.connection.on("somethingHappened", callback);
   }
 
-  removesomethingHappenedModelHandler(callback: (someEvent: EventThingy) => void): void {
+  removeSomethingHappenedModelHandler(callback: (someEvent: EventThingy) => void): void {
     this.connection.off("somethingHappened", callback);
   }
 
-  addsomethingHappenedModelListHandler(callback: (someEventsList: EventThingy[]) => void): void {
+  addSomethingHappenedModelListHandler(callback: (someEventsList: EventThingy[]) => void): void {
     this.connection.on("somethingHappened", callback);
   }
 
-  removesomethingHappenedModelListHandler(callback: (someEventsList: EventThingy[]) => void): void {
+  removeSomethingHappenedModelListHandler(callback: (someEventsList: EventThingy[]) => void): void {
     this.connection.off("somethingHappened", callback);
   }
-}  
+}
