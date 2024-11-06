@@ -5,15 +5,6 @@ namespace TypescriptModelGenerator;
 
 public static class TypeScriptModelGenerator
 {
-    private const string TypeTemplate =
-        """
-        export type {{typeName}} = {
-        {{properties}}
-        };
-        """;
-
-    private const string EnumTemplate = "export type {{typeName}} = {{values}};";
-
     private static readonly NullabilityInfoContext NullabilityInfoContext = new NullabilityInfoContext();
 
 
@@ -39,24 +30,13 @@ public static class TypeScriptModelGenerator
     /// Parse a type and return its typescript type
     /// </summary>
     /// <returns>Either the primitive typescript type, or the name of complex type created</returns>
-    public static string ParseType(
-        Type inputType,
-        Dictionary<string, string> processedTypes,
-        bool nullableRefType = false)
+    public static string ParseType(Type type, Dictionary<string, string> processedTypes, bool nullableRefType = false)
     {
-        var (type, isNullableType) = GetTypeAndNullable(inputType);
-
-        var arrayType = "";
-        if (typeof(IList).IsAssignableFrom(type) ||
-            (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string)))
-        {
-            arrayType = "[]";
-            type = type.GenericTypeArguments.First();
-        }
-
+        var isNullableType = TryFromNullableType(type, out type);
+        var isCollectionType = TryFromCollectionType(type, out type);
         var typeName = ParseTypeRecursively(type, processedTypes);
 
-        return typeName + arrayType + (isNullableType || nullableRefType ? " | null" : "");
+        return typeName + (isCollectionType ? "[]" : "") + (isNullableType || nullableRefType ? " | null" : "");
     }
 
 
@@ -80,7 +60,7 @@ public static class TypeScriptModelGenerator
         // New type which hasnt been seen before, recursively add bits of it to the processed types
         if (type.IsEnum)
         {
-            var tsTypeDefinition = EnumTemplate
+            var tsTypeDefinition = TypescriptTemplates.EnumTemplate
                 .Replace("{{values}}", string.Join(" | ", type.GetEnumNames().Select(v => $"\"{v}\"")))
                 .Replace("{{typeName}}", type.Name);
 
@@ -91,7 +71,7 @@ public static class TypeScriptModelGenerator
             var tsProperties = type.GetProperties()
                 .Select(p => $"  {p.Name.ToCamelCase()}: {ParsePropertyInfo(p, processedTypes)};");
 
-            var tsTypeDefinition = TypeTemplate
+            var tsTypeDefinition = TypescriptTemplates.TypeTemplate
                 .Replace("{{properties}}", string.Join("\n", tsProperties))
                 .Replace("{{typeName}}", type.Name);
 
@@ -138,14 +118,38 @@ public static class TypeScriptModelGenerator
 
 
     /// <summary>
-    /// Tries to figure out if this is some kind of a nullable value type
+    /// Tries to figure out if this is something that should be converted to a collection
     /// </summary>
-    private static (Type type, bool isNullable) GetTypeAndNullable(Type type)
+    /// <returns>True if collection type</returns>
+    private static bool TryFromCollectionType(Type type, out Type underlyingType)
+    {
+        if (typeof(IList).IsAssignableFrom(type)
+            || (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string)))
+        {
+            underlyingType = type.GenericTypeArguments.First();
+            return true;
+        }
+
+        underlyingType = type;
+        return false;
+    }
+
+
+    /// <summary>
+    /// Tries to figure out if this is some kind of nullable value type
+    /// </summary>
+    /// <returns>True if nullable</returns>
+    private static bool TryFromNullableType(Type type, out Type underlyingType)
     {
         var maybeUnderlyingType = Nullable.GetUnderlyingType(type);
 
-        return maybeUnderlyingType != null
-            ? (maybeUnderlyingType, true)
-            : (type, false);
+        if (maybeUnderlyingType != null)
+        {
+            underlyingType = maybeUnderlyingType;
+            return true;
+        }
+
+        underlyingType = type;
+        return false;
     }
 }

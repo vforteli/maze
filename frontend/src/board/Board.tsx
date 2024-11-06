@@ -26,11 +26,11 @@ const Board = () => {
   const [highlightTiles, setHighlightTiles] = useState<Record<number, number | undefined>>({});
 
   const handleSomethingHappened = useCallback((message: string | null) => {
-    console.debug("board: " + message);
+    console.debug("handleSomethingHappened: board: " + message);
   }, []);
 
   const handlePong = useCallback((message: string) => {
-    console.debug("board: " + message);
+    console.debug("handlePong: " + message);
   }, []);
 
   const handleSomethingHappenedModel = useCallback((item: unknown) => {

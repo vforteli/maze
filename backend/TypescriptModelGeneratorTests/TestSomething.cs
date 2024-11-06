@@ -118,7 +118,7 @@ public class TestSomething
     public void NestedTypesModel()
     {
         var types = new Dictionary<string, string>();
-        TypeScriptModelGenerator.ParseTypeRecursively(typeof(NestedTypesModel), types);
+        var typeName = TypeScriptModelGenerator.ParseTypeRecursively(typeof(NestedTypesModel), types);
 
         const string expectedType =
             """
@@ -143,6 +143,7 @@ public class TestSomething
         Assert.Multiple(() =>
         {
             Assert.That(types, Has.Count.EqualTo(2));
+            Assert.That(typeName, Is.EqualTo("NestedTypesModel"));
             Assert.That(types["NestedTypesModel"], Is.EqualTo(expectedType));
             Assert.That(types["TypesModel"], Is.EqualTo(expectedNestedType));
         });
@@ -152,7 +153,7 @@ public class TestSomething
     public void ListTypesModel()
     {
         var types = new Dictionary<string, string>();
-        TypeScriptModelGenerator.ParseTypeRecursively(typeof(TypeWithList), types);
+        var typeName = TypeScriptModelGenerator.ParseTypeRecursively(typeof(TypeWithList), types);
 
         const string expectedTypesModel =
             """
@@ -175,6 +176,7 @@ public class TestSomething
         Assert.Multiple(() =>
         {
             Assert.That(types, Has.Count.EqualTo(2));
+            Assert.That(typeName, Is.EqualTo("TypeWithList"));
             Assert.That(types["TypesModel"], Is.EqualTo(expectedTypesModel));
             Assert.That(types["TypeWithList"], Is.EqualTo(expectedTypeWithListModel));
         });
@@ -184,7 +186,7 @@ public class TestSomething
     public void EnumTypesModel()
     {
         var types = new Dictionary<string, string>();
-        TypeScriptModelGenerator.ParseTypeRecursively(typeof(TypeWithEnum), types);
+        var typeName = TypeScriptModelGenerator.ParseTypeRecursively(typeof(TypeWithEnum), types);
 
         const string expectedEnumType =
             """
@@ -202,6 +204,7 @@ public class TestSomething
         Assert.Multiple(() =>
         {
             Assert.That(types, Has.Count.EqualTo(2));
+            Assert.That(typeName, Is.EqualTo("TypeWithEnum"));
             Assert.That(types["SomeEnum"], Is.EqualTo(expectedEnumType));
             Assert.That(types["TypeWithEnum"], Is.EqualTo(expectedTypeWithEnum));
         });
