@@ -32,5 +32,8 @@ var hub = app.Services.GetRequiredService<IHubContext<MazeHub, IMazeHub>>();
 await using var timer = new Timer(s => { hub.Clients.All.SomethingHappened($"{DateTime.UtcNow} :: sup?"); }, null, 5000,
     5000);
 
+await using var pongTimer = new Timer(s => { hub.Clients.All.Pong("pong!"); }, null, 5000,
+    5000);
+
 
 app.Run();

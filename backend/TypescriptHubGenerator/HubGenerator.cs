@@ -13,11 +13,11 @@ public static class HubGenerator
         const string callbackTemplate =
             """
               add{{methodName}}Handler(callback: ({{invokeParameters}}) => void): void {
-                this.connection.on("somethingHappened", callback);
+                this.connection.on("{{callbackName}}", callback);
               }
             
               remove{{methodName}}Handler(callback: ({{invokeParameters}}) => void): void {
-                this.connection.off("somethingHappened", callback);
+                this.connection.off("{{callbackName}}", callback);
               }
             """;
 
@@ -29,6 +29,7 @@ public static class HubGenerator
 
         return callbackTemplate
             .Replace("{{methodName}}", method.Name)
+            .Replace("{{callbackName}}", method.Name.ToCamelCase())
             .Replace("{{invokeParameters}}", parameters);
     }
 

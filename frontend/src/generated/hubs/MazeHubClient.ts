@@ -76,11 +76,11 @@ export class MazeHubClient {
   }
 
   addPongHandler(callback: (message: string) => void): void {
-    this.connection.on("somethingHappened", callback);
+    this.connection.on("pong", callback);
   }
 
   removePongHandler(callback: (message: string) => void): void {
-    this.connection.off("somethingHappened", callback);
+    this.connection.off("pong", callback);
   }
 
   addSomethingHappenedHandler(callback: (message: string | null) => void): void {
@@ -92,18 +92,18 @@ export class MazeHubClient {
   }
 
   addSomethingHappenedModelHandler(callback: (someEvent: EventThingy) => void): void {
-    this.connection.on("somethingHappened", callback);
+    this.connection.on("somethingHappenedModel", callback);
   }
 
   removeSomethingHappenedModelHandler(callback: (someEvent: EventThingy) => void): void {
-    this.connection.off("somethingHappened", callback);
+    this.connection.off("somethingHappenedModel", callback);
   }
 
   addSomethingHappenedModelListHandler(callback: (someEventsList: EventThingy[]) => void): void {
-    this.connection.on("somethingHappened", callback);
+    this.connection.on("somethingHappenedModelList", callback);
   }
 
   removeSomethingHappenedModelListHandler(callback: (someEventsList: EventThingy[]) => void): void {
-    this.connection.off("somethingHappened", callback);
+    this.connection.off("somethingHappenedModelList", callback);
   }
 }

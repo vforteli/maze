@@ -29,6 +29,10 @@ const Board = () => {
     console.debug("board: " + message);
   }, []);
 
+  const handlePong = useCallback((message: string) => {
+    console.debug("board: " + message);
+  }, []);
+
   const handleSomethingHappenedModel = useCallback((item: unknown) => {
     console.dir(item);
   }, []);
@@ -36,12 +40,14 @@ const Board = () => {
   useEffect(() => {
     mazeHub.hub.addSomethingHappenedHandler(handleSomethingHappened);
     mazeHub.hub.addSomethingHappenedModelHandler(handleSomethingHappenedModel);
+    mazeHub.hub.addPongHandler(handlePong);
 
     return () => {
       mazeHub.hub.removeSomethingHappenedHandler(handleSomethingHappened);
       mazeHub.hub.removeSomethingHappenedModelHandler(handleSomethingHappenedModel);
+      mazeHub.hub.removePongHandler(handlePong);
     };
-  }, [handleSomethingHappened, handleSomethingHappenedModel, mazeHub.hub]);
+  }, [handlePong, handleSomethingHappened, handleSomethingHappenedModel, mazeHub.hub]);
 
   const playerTileRef = useRef<HTMLDivElement>(null);
 
