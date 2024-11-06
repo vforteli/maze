@@ -25,28 +25,9 @@ Directory.CreateDirectory(outputFolder);
 
 foreach (var hubType in hubTypes)
 {
-    Console.WriteLine($"Found hubtype {hubType.Name}");
-    var hubClientName = hubType.Name + "Client";
-    var types = new Dictionary<string, string>();
-
-    var callbackMethods = hubType.BaseType?.GenericTypeArguments
-        .First()
-        .GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public) ?? [];
-
-    var callbackMethodStrings = callbackMethods.Select((m) => HubGenerator.CreateCallback(m, types));
-
-    var hubMethods =
-        hubType.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
-
-    var hubMethodStrings = hubMethods.Select((m) => HubGenerator.CreateMethod(m, types));
-
-    var hubClientTs = HubGenerator.CreateHubClient(
-        hubClientName,
-        string.Join("\n\n", hubMethodStrings),
-        string.Join("\n\n", callbackMethodStrings),
-        string.Join("\n\n", types.Values));
-
-    await File.WriteAllTextAsync(Path.Combine(outputFolder, $"{hubClientName}.ts"), hubClientTs);
+    await File.WriteAllTextAsync(
+        Path.Combine(outputFolder, $"{hubType.Name}Client.ts"),
+        HubGenerator.CreateFromHub(hubType));
 }
 
 

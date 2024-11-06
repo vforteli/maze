@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.SignalR;
 using TypescriptModelGenerator;
 
 namespace TypescriptHubGenerator;
@@ -6,9 +7,41 @@ namespace TypescriptHubGenerator;
 public static class HubGenerator
 {
     /// <summary>
+    /// Create typescript client from hub
+    /// </summary>
+    /// <param name="hubType"></param>
+    /// <returns></returns>
+    public static string CreateFromHub(Type hubType)
+    {
+        if (!typeof(Hub).IsAssignableFrom(hubType))
+        {
+            throw new ArgumentException($"Type '{hubType.Name}' is not a subclass of Hub.");
+        }
+
+        var types = new Dictionary<string, string>();
+
+        var callbackMethods = hubType.BaseType?.GenericTypeArguments
+            .First()
+            .GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public) ?? [];
+
+        var callbackMethodStrings = callbackMethods.Select((m) => CreateCallback(m, types));
+
+        var hubMethods =
+            hubType.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
+
+        var hubMethodStrings = hubMethods.Select((m) => CreateMethod(m, types));
+
+        return CreateHubClient(
+            hubType.Name + "Client",
+            string.Join("\n\n", hubMethodStrings),
+            string.Join("\n\n", callbackMethodStrings),
+            string.Join("\n\n", types.Values));
+    }
+
+    /// <summary>
     /// Create the callback functions for a Hub, ie the functions to be called on the client side
     /// </summary>
-    public static string CreateCallback(MethodInfo method, Dictionary<string, string> processedTypes)
+    private static string CreateCallback(MethodInfo method, Dictionary<string, string> processedTypes)
     {
         const string callbackTemplate =
             """
@@ -37,7 +70,7 @@ public static class HubGenerator
     /// <summary>
     /// Create the invokable hub methods
     /// </summary>
-    public static string CreateMethod(MethodInfo method, Dictionary<string, string> processedTypes)
+    private static string CreateMethod(MethodInfo method, Dictionary<string, string> processedTypes)
     {
         const string methodTemplate =
             """
@@ -76,7 +109,7 @@ public static class HubGenerator
     /// <summary>
     /// Create the actual hub client
     /// </summary>
-    public static string CreateHubClient(string hubName, string methods, string callbacks, string types)
+    private static string CreateHubClient(string hubName, string methods, string callbacks, string types)
     {
         const string hubClientTemplate =
             """
