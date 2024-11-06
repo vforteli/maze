@@ -37,12 +37,24 @@ public record TypeWithList
     public required List<TypesModel> TypesList { get; init; }
 }
 
+public enum SomeEnum
+{
+    Hurr,
+    Durr,
+}
+
+public record TypeWithEnum
+{
+    public required SomeEnum SomeEnumValue { get; init; }
+    public required SomeEnum? SomeNullableEnumValue { get; init; }
+}
+
 public class TestSomething
 {
     private static string TestConvertSingleType(Type model)
     {
         var types = new Dictionary<string, string>();
-        TypeScriptModelGenerator.ConvertRecursive(model, types);
+        TypeScriptModelGenerator.ParseTypeRecursively(model, types);
         return types.Single().Value;
     }
 
@@ -106,7 +118,7 @@ public class TestSomething
     public void NestedTypesModel()
     {
         var types = new Dictionary<string, string>();
-        TypeScriptModelGenerator.ConvertRecursive(typeof(NestedTypesModel), types);
+        TypeScriptModelGenerator.ParseTypeRecursively(typeof(NestedTypesModel), types);
 
         const string expectedType =
             """
@@ -140,7 +152,7 @@ public class TestSomething
     public void ListTypesModel()
     {
         var types = new Dictionary<string, string>();
-        TypeScriptModelGenerator.ConvertRecursive(typeof(TypeWithList), types);
+        TypeScriptModelGenerator.ParseTypeRecursively(typeof(TypeWithList), types);
 
         const string expectedTypesModel =
             """
@@ -165,6 +177,33 @@ public class TestSomething
             Assert.That(types, Has.Count.EqualTo(2));
             Assert.That(types["TypesModel"], Is.EqualTo(expectedTypesModel));
             Assert.That(types["TypeWithList"], Is.EqualTo(expectedTypeWithListModel));
+        });
+    }
+
+    [TestCase]
+    public void EnumTypesModel()
+    {
+        var types = new Dictionary<string, string>();
+        TypeScriptModelGenerator.ParseTypeRecursively(typeof(TypeWithEnum), types);
+
+        const string expectedEnumType =
+            """
+            export type SomeEnum = "Hurr" | "Durr";
+            """;
+
+        const string expectedTypeWithEnum =
+            """
+            export type TypeWithEnum = {
+              someEnumValue: SomeEnum;
+              someNullableEnumValue: SomeEnum | null;
+            };
+            """;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(types, Has.Count.EqualTo(2));
+            Assert.That(types["SomeEnum"], Is.EqualTo(expectedEnumType));
+            Assert.That(types["TypeWithEnum"], Is.EqualTo(expectedTypeWithEnum));
         });
     }
 }

@@ -12,6 +12,8 @@ public static class TypeScriptModelGenerator
         };
         """;
 
+    private const string EnumTemplate = "export type {{typeName}} = {{values}};";
+
     private static readonly NullabilityInfoContext NullabilityInfoContext = new NullabilityInfoContext();
 
 
@@ -52,62 +54,87 @@ public static class TypeScriptModelGenerator
             type = type.GenericTypeArguments.First();
         }
 
-        var tsPrimitiveType = ToTypescriptPrimitiveType(type);
+        var typeName = ParseTypeRecursively(type, processedTypes);
 
-        if (tsPrimitiveType == null)
-        {
-            ConvertRecursive(type, processedTypes);
-        }
-
-        return (tsPrimitiveType ?? type.Name) + arrayType + (isNullableType || nullableRefType ? " | null" : "");
+        return typeName + arrayType + (isNullableType || nullableRefType ? " | null" : "");
     }
 
 
     /// <summary>
     /// Recursively convert a type into typescript types
     /// </summary>
-    public static void ConvertRecursive(Type model, Dictionary<string, string> processedTypes)
+    /// <returns>The primitive type or the name of the complex type</returns>
+    public static string ParseTypeRecursively(Type type, Dictionary<string, string> processedTypes)
     {
-        if (processedTypes.ContainsKey(model.Name))
+        if (TryToTypescriptPrimitiveType(type, out var primitiveType))
         {
-            return;
+            return primitiveType;
         }
 
-        var tsProperties = model.GetProperties()
-            .Select(p => $"  {p.Name.ToCamelCase()}: {ParsePropertyInfo(p, processedTypes)};");
+        // If we already have seen this type before, just return the name
+        if (processedTypes.ContainsKey(type.Name))
+        {
+            return type.Name;
+        }
 
-        var tsTypeDefinition = TypeTemplate
-            .Replace("{{properties}}", string.Join("\n", tsProperties))
-            .Replace("{{typeName}}", model.Name);
+        // New type which hasnt been seen before, recursively add bits of it to the processed types
+        if (type.IsEnum)
+        {
+            var tsTypeDefinition = EnumTemplate
+                .Replace("{{values}}", string.Join(" | ", type.GetEnumNames().Select(v => $"\"{v}\"")))
+                .Replace("{{typeName}}", type.Name);
 
-        processedTypes.Add(model.Name, tsTypeDefinition);
+            processedTypes.Add(type.Name, tsTypeDefinition);
+        }
+        else if (type.IsClass)
+        {
+            var tsProperties = type.GetProperties()
+                .Select(p => $"  {p.Name.ToCamelCase()}: {ParsePropertyInfo(p, processedTypes)};");
+
+            var tsTypeDefinition = TypeTemplate
+                .Replace("{{properties}}", string.Join("\n", tsProperties))
+                .Replace("{{typeName}}", type.Name);
+
+            processedTypes.Add(type.Name, tsTypeDefinition);
+        }
+        else
+        {
+            throw new ArgumentException($"What do we do with this?");
+        }
+
+        return type.Name;
     }
 
 
     /// <summary>
     /// Get the typescript primitive type from c# type if possible
     /// </summary>
-    private static string? ToTypescriptPrimitiveType(Type type) => type switch
+    private static bool TryToTypescriptPrimitiveType(Type type, out string primitiveType)
     {
-        // todo more?
-        not null when type == typeof(bool) => "boolean",
-        not null when type == typeof(byte) => "number",
-        not null when type == typeof(sbyte) => "number",
-        not null when type == typeof(short) => "number",
-        not null when type == typeof(ushort) => "number",
-        not null when type == typeof(int) => "number",
-        not null when type == typeof(uint) => "number",
-        not null when type == typeof(long) => "number",
-        not null when type == typeof(ulong) => "number",
-        not null when type == typeof(float) => "number",
-        not null when type == typeof(double) => "number",
-        not null when type == typeof(decimal) => "number",
-        not null when type == typeof(string) => "string",
-        not null when type == typeof(char) => "string",
-        not null when type == typeof(DateTime) => "string",
-        not null when type == typeof(DateTimeOffset) => "string",
-        _ => null
-    };
+        primitiveType = type switch
+        {
+            // todo more?
+            not null when type == typeof(bool) => "boolean",
+            not null when type == typeof(byte) => "number",
+            not null when type == typeof(sbyte) => "number",
+            not null when type == typeof(short) => "number",
+            not null when type == typeof(ushort) => "number",
+            not null when type == typeof(int) => "number",
+            not null when type == typeof(uint) => "number",
+            not null when type == typeof(long) => "number",
+            not null when type == typeof(ulong) => "number",
+            not null when type == typeof(float) => "number",
+            not null when type == typeof(double) => "number",
+            not null when type == typeof(decimal) => "number",
+            not null when type == typeof(string) => "string",
+            not null when type == typeof(char) => "string",
+            not null when type == typeof(DateTime) => "string",
+            not null when type == typeof(DateTimeOffset) => "string",
+            _ => "unknown"
+        };
+
+        return primitiveType != "unknown";
+    }
 
 
     /// <summary>

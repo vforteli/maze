@@ -18,6 +18,14 @@ public record DoStuffObjectModel
     public required DateTime? SomeNullableDateTime { get; init; }
 }
 
+public enum DoStuffEnum
+{
+    Herp,
+    Derp,
+    Hurr,
+    Durr,
+}
+
 public class MazeHub : Hub<IMazeHub>
 {
     public async Task<DoStuffObjectModel> DoStuffObject(DoStuffObjectModel someObject)
@@ -50,6 +58,12 @@ public class MazeHub : Hub<IMazeHub>
         var result = number + otherNumber;
         await Clients.Caller.SomethingHappened(result.ToString());
         return result;
+    }
+
+    public async Task<DoStuffEnum?> DoStuffWithEnum(DoStuffEnum? someNullableEnum, DoStuffEnum someEnum)
+    {
+        await Task.CompletedTask;
+        return null;
     }
 
 

@@ -11,6 +11,8 @@ export type DoStuffObjectModel = {
   someNullableDateTime: string | null;
 };
 
+export type DoStuffEnum = "Herp" | "Derp" | "Hurr" | "Durr";
+
 export type SendMessageModel = {
   message: string;
   someId: number;
@@ -51,6 +53,10 @@ export class MazeHubClient {
 
   async doStuffNullableInt(number: number | null, otherNumber: number) {
     await this.connection.invoke<number | null>("doStuffNullableInt", number, otherNumber);
+  }
+
+  async doStuffWithEnum(someNullableEnum: DoStuffEnum | null, someEnum: DoStuffEnum) {
+    await this.connection.invoke<DoStuffEnum | null>("doStuffWithEnum", someNullableEnum, someEnum);
   }
 
   async sendMessage(message: SendMessageModel) {
