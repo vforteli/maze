@@ -1,5 +1,7 @@
 import type { HubConnection } from "@microsoft/signalr";
 
+import type { EventThingy } from "./types/EventThingy";
+
 export class MazeHubClient {
   readonly connection: HubConnection;
 

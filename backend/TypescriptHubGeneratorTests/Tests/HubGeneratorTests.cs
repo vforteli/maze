@@ -90,6 +90,6 @@ public class Tests
 
         var actual = TypescriptHubGenerator.HubGenerator.CreateFromHub(typeof(TestHub));
 
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.That(actual.HubFile, Is.EqualTo(expected));
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using Microsoft.AspNetCore.SignalR;
 using TypescriptModelGenerator;
@@ -8,6 +9,8 @@ public record HubFiles(Dictionary<string, string> TypeFiles, string HubFile);
 
 public static class HubGenerator
 {
+    private const string Import = """import type { {{typeName}} } from "./types/{{typeName}}";""";
+
     /// <summary>
     /// Create typescript client from hub
     /// </summary>
@@ -20,30 +23,42 @@ public static class HubGenerator
             throw new ArgumentException($"Type '{hubType.Name}' is not a subclass of Hub.");
         }
 
+        if (hubType.BaseType == null)
+        {
+            throw new ArgumentNullException("Hub is not generic... nothing to do here...");
+        }
+
         var types = new Dictionary<string, string>();
 
-        var callbackMethods = hubType.BaseType?.GenericTypeArguments
+        var callbackMethods = hubType.BaseType.GenericTypeArguments
             .First()
-            .GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public) ?? [];
+            .GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
+            .Select((m) => CreateCallback(m, types))
+            .ToImmutableList();
 
-        var callbackMethodStrings = callbackMethods.Select((m) => CreateCallback(m, types));
+        var hubMethodStrings = hubType
+            .GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
+            .Select((m) => CreateMethod(m, types));
 
-        var hubMethods =
-            hubType.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
 
-        var hubMethodStrings = hubMethods.Select((m) => CreateMethod(m, types));
+        var imports = callbackMethods
+            .SelectMany(o => o.imports)
+            .DistinctBy(o => o.Name)
+            .Select(o => Import.Replace("{{typeName}}", o.Name)).ToImmutableList();
 
         return new HubFiles(types,
             CreateHubClient(
                 $"{hubType.Name}Client",
                 string.Join("\n\n", hubMethodStrings),
-                string.Join("\n\n", callbackMethodStrings)));
+                string.Join("\n\n", callbackMethods.Select(o => o.callbacks)),
+                string.Join("\n", imports)));
     }
 
     /// <summary>
     /// Create the callback functions for a Hub, ie the functions to be called on the client side
     /// </summary>
-    private static string CreateCallback(MethodInfo method, Dictionary<string, string> processedTypes)
+    private static (ImmutableList<ComplexType> imports, string callbacks) CreateCallback(MethodInfo method,
+        Dictionary<string, string> processedTypes)
     {
         const string callbackTemplate =
             """
@@ -56,16 +71,22 @@ public static class HubGenerator
               }
             """;
 
-        var parameters = string.Join(", ",
-            method.GetParameters()
-                .Select(p =>
-                    $"{p.Name?.ToCamelCase()}: {TypeScriptModelGenerator.ParseParameterInfo(p, processedTypes)}"
-                ));
+        var parameters = method.GetParameters()
+            .Select(o =>
+                new KeyValuePair<string, TsType>(
+                    o.Name?.ToCamelCase() ??
+                    throw new ArgumentNullException("Cannot have parameters without name here..."),
+                    TypeScriptModelGenerator.ParseParameterInfo(o, processedTypes)))
+            .ToImmutableList();
 
-        return callbackTemplate
+        var parametersString = string.Join(", ", parameters.Select(p => $"{p.Key}: {p.Value}"));
+
+        var imports = parameters.Select(o => o.Value).OfType<ComplexType>().ToImmutableList();
+
+        return (imports, callbackTemplate
             .Replace("{{methodName}}", method.Name)
             .Replace("{{callbackName}}", method.Name.ToCamelCase())
-            .Replace("{{invokeParameters}}", parameters);
+            .Replace("{{invokeParameters}}", parametersString));
     }
 
 
@@ -111,11 +132,13 @@ public static class HubGenerator
     /// <summary>
     /// Create the actual hub client
     /// </summary>
-    private static string CreateHubClient(string hubName, string methods, string callbacks)
+    private static string CreateHubClient(string hubName, string methods, string callbacks, string imports)
     {
         const string hubClientTemplate =
             """
             import type { HubConnection } from "@microsoft/signalr";
+
+            {{imports}}
 
             export class {{hubClientName}} {
               readonly connection: HubConnection;
@@ -133,6 +156,7 @@ public static class HubGenerator
 
         return hubClientTemplate
             .Replace("{{hubClientName}}", hubName)
+            .Replace("{{imports}}", imports)
             .Replace("{{methods}}", methods)
             .Replace("{{callbacks}}", callbacks);
     }
