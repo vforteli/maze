@@ -19,6 +19,7 @@ public record SomeObjectModel
     public required int? SomeNullableInt { get; init; }
     public required DateTime SomeDateTime { get; init; }
     public required DateTime? SomeNullableDateTime { get; init; }
+    public required EventType SomeEvent { get; init; }
 }
 
 public record EventModel(EventType EventType, string Message);

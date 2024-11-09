@@ -9,18 +9,8 @@ public class Tests
             """
             import type { HubConnection } from "@microsoft/signalr";
 
-            export type SomeObjectModel = {
-              someBoolean: boolean;
-              someNullableBoolean: boolean | null;
-              someString: string;
-              someNullableString: string | null;
-              someInt: number;
-              someNullableInt: number | null;
-              someDateTime: string;
-              someNullableDateTime: string | null;
-            };
-
-            export type EventType = "SomeEvent" | "SomeOtherEvent";
+            import type { EventType } from "./types/EventType";
+            import type { SomeObjectModel } from "./types/SomeObjectModel";
 
             export class TestHubClient {
               readonly connection: HubConnection;
@@ -38,11 +28,11 @@ public class Tests
               }
             
               async doStuffNullableInt(number: number | null, otherNumber: number) {
-                await this.connection.invoke<number | null>("doStuffNullableInt", number, otherNumber);
+                await this.connection.invoke<number>("doStuffNullableInt", number, otherNumber);
               }
             
               async doStuffWithEnum(someNullableEnum: EventType | null, someEnum: EventType) {
-                await this.connection.invoke<EventType | null>("doStuffWithEnum", someNullableEnum, someEnum);
+                await this.connection.invoke<EventType>("doStuffWithEnum", someNullableEnum, someEnum);
               }
             
               addPongHandler(callback: () => void): void {
@@ -88,8 +78,33 @@ public class Tests
 
             """;
 
+        const string eventTypeExpected = """export type EventType = "SomeEvent" | "SomeOtherEvent";""";
+
+        const string someObjectModelExpected =
+            """
+            import type { EventType } from "./EventType";
+
+            export type SomeObjectModel = {
+              someBoolean: boolean;
+              someNullableBoolean: boolean | null;
+              someString: string;
+              someNullableString: string | null;
+              someInt: number;
+              someNullableInt: number | null;
+              someDateTime: string;
+              someNullableDateTime: string | null;
+              someEvent: EventType;
+            };
+            """;
+
         var actual = TypescriptHubGenerator.HubGenerator.CreateFromHub(typeof(TestHub));
 
-        Assert.That(actual.HubFile, Is.EqualTo(expected));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actual.HubFile, Is.EqualTo(expected));
+            Assert.That(actual.TypeFiles, Has.Count.EqualTo(2));
+            Assert.That(actual.TypeFiles["EventType"], Is.EqualTo(eventTypeExpected));
+            Assert.That(actual.TypeFiles["SomeObjectModel"], Is.EqualTo(someObjectModelExpected));
+        });
     }
 }

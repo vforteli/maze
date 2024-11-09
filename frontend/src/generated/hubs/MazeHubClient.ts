@@ -1,6 +1,10 @@
 import type { HubConnection } from "@microsoft/signalr";
 
 import type { EventThingy } from "./types/EventThingy";
+import type { DoStuffObjectModel } from "./types/DoStuffObjectModel";
+import type { DoStuffEnum } from "./types/DoStuffEnum";
+import type { SendMessageModel } from "./types/SendMessageModel";
+import type { SendMessageResponseModel } from "./types/SendMessageResponseModel";
 
 export class MazeHubClient {
   readonly connection: HubConnection;
@@ -26,11 +30,11 @@ export class MazeHubClient {
   }
 
   async doStuffNullableInt(number: number | null, otherNumber: number) {
-    await this.connection.invoke<number | null>("doStuffNullableInt", number, otherNumber);
+    await this.connection.invoke<number>("doStuffNullableInt", number, otherNumber);
   }
 
   async doStuffWithEnum(someNullableEnum: DoStuffEnum | null, someEnum: DoStuffEnum) {
-    await this.connection.invoke<DoStuffEnum | null>("doStuffWithEnum", someNullableEnum, someEnum);
+    await this.connection.invoke<DoStuffEnum>("doStuffWithEnum", someNullableEnum, someEnum);
   }
 
   async sendMessage(message: SendMessageModel) {
@@ -46,7 +50,7 @@ export class MazeHubClient {
   }
 
   async sendSomeList(list: EventThingy[]) {
-    await this.connection.invoke<EventThingy[]>("sendSomeList", list);
+    await this.connection.invoke<EventThingy>("sendSomeList", list);
   }
 
   addPongHandler(callback: (message: string) => void): void {

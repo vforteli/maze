@@ -38,21 +38,25 @@ public static class HubGenerator
 
         var hubMethodStrings = hubType
             .GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-            .Select((m) => CreateMethod(m, types));
+            .Select((m) => CreateMethod(m, types))
+            .ToImmutableList();
 
 
         var imports = callbackMethods
             .SelectMany(o => o.imports)
+            .Concat(hubMethodStrings.SelectMany(o => o.imports))
             .DistinctBy(o => o.Name)
-            .Select(o => Import.Replace("{{typeName}}", o.Name)).ToImmutableList();
+            .Select(o => Import.Replace("{{typeName}}", o.Name))
+            .ToImmutableList();
 
         return new HubFiles(types,
             CreateHubClient(
                 $"{hubType.Name}Client",
-                string.Join("\n\n", hubMethodStrings),
+                string.Join("\n\n", hubMethodStrings.Select(o => o.method)),
                 string.Join("\n\n", callbackMethods.Select(o => o.callbacks)),
                 string.Join("\n", imports)));
     }
+
 
     /// <summary>
     /// Create the callback functions for a Hub, ie the functions to be called on the client side
@@ -93,7 +97,8 @@ public static class HubGenerator
     /// <summary>
     /// Create the invokable hub methods
     /// </summary>
-    private static string CreateMethod(MethodInfo method, Dictionary<string, string> processedTypes)
+    private static (ImmutableList<ComplexType> imports, string method) CreateMethod(MethodInfo method,
+        Dictionary<string, string> processedTypes)
     {
         const string methodTemplate =
             """
@@ -104,28 +109,40 @@ public static class HubGenerator
 
         var methodName = method.Name.ToCamelCase();
 
-        var parameters = string.Join(", ",
-            method.GetParameters()
-                .Select(p =>
-                    $"{p.Name?.ToCamelCase()}: {TypeScriptModelGenerator.ParseParameterInfo(p, processedTypes)}"));
+        var parameters = method.GetParameters()
+            .Select(o =>
+                new KeyValuePair<string, TsType>(
+                    o.Name?.ToCamelCase() ??
+                    throw new ArgumentNullException("Cannot have parameters without name here..."),
+                    TypeScriptModelGenerator.ParseParameterInfo(o, processedTypes)))
+            .ToImmutableList();
 
-        var invokeParameters =
-            new List<string> { $"\"{methodName}\"" }.Concat(method.GetParameters().Select(p => p.Name!.ToCamelCase()));
+        var parametersString = string.Join(", ", parameters.Select(p => $"{p.Key}: {p.Value}"));
+
+        var imports = parameters.Select(o => o.Value).OfType<ComplexType>().ToList();
+
+        var invokeParameters = new List<string> { $"\"{methodName}\"" }.Concat(parameters.Select(o => o.Key));
 
         var invokeParametersString = string.Join(", ", invokeParameters);
 
         // so, should we treat all references types as nullable since this cannot be determined...
-        var returnTypeString = method.ReturnType.BaseType == typeof(Task)
-            ? $"<{TypeScriptModelGenerator.ParseTypeRecursively(method.ReturnType.GenericTypeArguments.First(), processedTypes, false)}>"
-            : "";
+        var returnType = method.ReturnType.BaseType == typeof(Task)
+            ? TypeScriptModelGenerator.ParseTypeRecursively(method.ReturnType.GenericTypeArguments.First(),
+                processedTypes, false)
+            : null;
+
+        if (returnType is ComplexType complexType)
+        {
+            imports.Add(complexType);
+        }
 
         var methodTypeScript = methodTemplate
-            .Replace("{{methodParameters}}", parameters)
+            .Replace("{{methodParameters}}", parametersString)
             .Replace("{{methodName}}", methodName)
             .Replace("{{invokeParameters}}", invokeParametersString)
-            .Replace("{{returnTypeParameter}}", returnTypeString);
+            .Replace("{{returnTypeParameter}}", returnType != null ? $"<{returnType.Name}>" : "");
 
-        return methodTypeScript;
+        return (imports.ToImmutableList(), methodTypeScript);
     }
 
 
