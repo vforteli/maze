@@ -2,9 +2,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\mazebackend\mazebackend.csproj"/>
-        <ProjectReference Include="..\TypescriptModelGenerator\TypescriptModelGenerator.csproj"/>
     </ItemGroup>
-    
+
     <PropertyGroup>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <OutputType>Exe</OutputType>
@@ -18,6 +17,10 @@
         <Content Include="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="vforteli.TypeScriptModelGenerator" Version="0.1.0-prerelease.20241109121858"/>
     </ItemGroup>
 
 </Project>

@@ -25,9 +25,16 @@ Directory.CreateDirectory(outputFolder);
 
 foreach (var hubType in hubTypes)
 {
-    await File.WriteAllTextAsync(
-        Path.Combine(outputFolder, $"{hubType.Name}Client.ts"),
-        HubGenerator.CreateFromHub(hubType));
+    var hubFiles = HubGenerator.CreateFromHub(hubType);
+
+    await File.WriteAllTextAsync(Path.Combine(outputFolder, $"{hubType.Name}Client.ts"), hubFiles.HubFile);
+
+    Directory.CreateDirectory(Path.Combine(outputFolder, "types"));
+
+    foreach (var file in hubFiles.TypeFiles)
+    {
+        await File.WriteAllTextAsync(Path.Combine(outputFolder, "types", $"{file.Key}.ts"), file.Value);
+    }
 }
 
 

@@ -76,7 +76,8 @@ public class MazeHub : Hub<IMazeHub>
 
     public async Task SendEvent()
     {
-        await Clients.All.SomethingHappenedModel(new EventThingy("some_name", "some_type"));
+        await Clients.All.SomethingHappenedModel(new EventThingy("some_name", "some_type",
+            new SomeNestedEventThingy("some_nested_name")));
     }
 
     public async Task<string> Ping()

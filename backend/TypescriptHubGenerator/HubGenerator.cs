@@ -4,6 +4,8 @@ using TypescriptModelGenerator;
 
 namespace TypescriptHubGenerator;
 
+public record HubFiles(Dictionary<string, string> TypeFiles, string HubFile);
+
 public static class HubGenerator
 {
     /// <summary>
@@ -11,7 +13,7 @@ public static class HubGenerator
     /// </summary>
     /// <param name="hubType"></param>
     /// <returns></returns>
-    public static string CreateFromHub(Type hubType)
+    public static HubFiles CreateFromHub(Type hubType)
     {
         if (!typeof(Hub).IsAssignableFrom(hubType))
         {
@@ -31,11 +33,11 @@ public static class HubGenerator
 
         var hubMethodStrings = hubMethods.Select((m) => CreateMethod(m, types));
 
-        return CreateHubClient(
-            hubType.Name + "Client",
-            string.Join("\n\n", hubMethodStrings),
-            string.Join("\n\n", callbackMethodStrings),
-            string.Join("\n\n", types.Values));
+        return new HubFiles(types,
+            CreateHubClient(
+                $"{hubType.Name}Client",
+                string.Join("\n\n", hubMethodStrings),
+                string.Join("\n\n", callbackMethodStrings)));
     }
 
     /// <summary>
@@ -93,7 +95,7 @@ public static class HubGenerator
 
         // so, should we treat all references types as nullable since this cannot be determined...
         var returnTypeString = method.ReturnType.BaseType == typeof(Task)
-            ? $"<{TypeScriptModelGenerator.ParseType(method.ReturnType.GenericTypeArguments.First(), processedTypes)}>"
+            ? $"<{TypeScriptModelGenerator.ParseTypeRecursively(method.ReturnType.GenericTypeArguments.First(), processedTypes, false)}>"
             : "";
 
         var methodTypeScript = methodTemplate
@@ -109,13 +111,11 @@ public static class HubGenerator
     /// <summary>
     /// Create the actual hub client
     /// </summary>
-    private static string CreateHubClient(string hubName, string methods, string callbacks, string types)
+    private static string CreateHubClient(string hubName, string methods, string callbacks)
     {
         const string hubClientTemplate =
             """
             import type { HubConnection } from "@microsoft/signalr";
-
-            {{types}}
 
             export class {{hubClientName}} {
               readonly connection: HubConnection;
@@ -132,7 +132,6 @@ public static class HubGenerator
             """;
 
         return hubClientTemplate
-            .Replace("{{types}}", types)
             .Replace("{{hubClientName}}", hubName)
             .Replace("{{methods}}", methods)
             .Replace("{{callbacks}}", callbacks);

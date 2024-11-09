@@ -1,33 +1,5 @@
 import type { HubConnection } from "@microsoft/signalr";
 
-export type DoStuffObjectModel = {
-  someBoolean: boolean;
-  someNullableBoolean: boolean | null;
-  someString: string;
-  someNullableString: string | null;
-  someInt: number;
-  someNullableInt: number | null;
-  someDateTime: string;
-  someNullableDateTime: string | null;
-};
-
-export type DoStuffEnum = "Herp" | "Derp" | "Hurr" | "Durr";
-
-export type SendMessageModel = {
-  message: string;
-  someId: number;
-};
-
-export type SendMessageResponseModel = {
-  someId: number;
-  status: string;
-};
-
-export type EventThingy = {
-  eventName: string;
-  eventType: string;
-};
-
 export class MazeHubClient {
   readonly connection: HubConnection;
 

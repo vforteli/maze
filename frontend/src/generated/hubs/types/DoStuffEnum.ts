@@ -1,0 +1,1 @@
+export type DoStuffEnum = "Herp" | "Derp" | "Hurr" | "Durr";

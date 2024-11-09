@@ -1,6 +1,8 @@
 namespace mazebackend;
 
-public record EventThingy(string EventName, string EventType);
+public record SomeNestedEventThingy(string NestedEventName);
+
+public record EventThingy(string EventName, string EventType, SomeNestedEventThingy NestedEvent);
 
 public interface IMazeHub
 {
