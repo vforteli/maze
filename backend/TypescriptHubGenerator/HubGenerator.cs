@@ -177,4 +177,66 @@ public static class HubGenerator
             .Replace("{{methods}}", methods)
             .Replace("{{callbacks}}", callbacks);
     }
+
+
+    public static string CreateReactContext(string hubName)
+    {
+        var hubVariableName = hubName.ToCamelCase();
+        const string contextTemplate =
+            """
+            import { HubConnection, HubConnectionState } from "@microsoft/signalr";
+            import { createContext, ReactNode, useEffect, useRef } from "react";
+            import { {{hubName}} } from "./{{hubName}}";
+
+            export type {{hubName}}ContextProviderProps = {
+              children: ReactNode;
+              hubConnection: HubConnection | (() => HubConnection);
+            };
+
+            export const {{hubName}}Context = createContext<{ hub: {{hubName}} } | undefined>(undefined);
+
+            export const {{hubName}}ContextProvider = ({ children, hubConnection }: {{hubName}}ContextProviderProps) => {
+              const connection = typeof hubConnection === "function" ? hubConnection() : hubConnection;
+            
+              const {{hubVariableName}} = useRef(new {{hubName}}(connection));
+            
+              useEffect(() => {
+                if ({{hubVariableName}}.current.connection.state === HubConnectionState.Disconnected) {
+                  {{hubVariableName}}.current.connection.start().catch((err) => console.error(err));
+                }
+              }, [{{hubVariableName}}.current.connection.state]);
+            
+              return <{{hubName}}Context.Provider value={{ hub: {{hubVariableName}}.current }}>{children}</{{hubName}}Context.Provider>;
+            };
+
+            """;
+
+        return contextTemplate
+            .Replace("{{hubName}}", hubName)
+            .Replace("{{hubVariableName}}", hubVariableName);
+    }
+
+
+    public static string CreateReactContextHook(string hubName)
+    {
+        var hubVariableName = hubName.ToCamelCase();
+        const string contextHookTemplate =
+            """
+            import { useContext } from "react";
+            import { {{hubName}}Context } from "./{{hubName}}Context";
+
+            export const use{{hubName}} = () => {
+              const context = useContext({{hubName}}Context);
+            
+              if (context === undefined) {
+                throw Error("Context undefined? Forgot a provider somewhere?");
+              }
+            
+              return context;
+            };
+
+            """;
+
+        return contextHookTemplate.Replace("{{hubName}}", hubName);
+    }
 }

@@ -26,8 +26,9 @@ Directory.CreateDirectory(outputFolder);
 foreach (var hubType in hubTypes)
 {
     var hubFiles = HubGenerator.CreateFromHub(hubType);
+    var hubClientName = $"{hubType.Name}Client";
 
-    await File.WriteAllTextAsync(Path.Combine(outputFolder, $"{hubType.Name}Client.ts"), hubFiles.HubFile);
+    await File.WriteAllTextAsync(Path.Combine(outputFolder, $"{hubClientName}.ts"), hubFiles.HubFile);
 
     Directory.CreateDirectory(Path.Combine(outputFolder, "types"));
 
@@ -35,6 +36,12 @@ foreach (var hubType in hubTypes)
     {
         await File.WriteAllTextAsync(Path.Combine(outputFolder, "types", $"{file.Key}.ts"), file.Value);
     }
+
+    var contextFile = HubGenerator.CreateReactContext(hubClientName);
+    await File.WriteAllTextAsync(Path.Combine(outputFolder, $"{hubClientName}Context.tsx"), contextFile);
+
+    var contextHookFile = HubGenerator.CreateReactContextHook(hubClientName);
+    await File.WriteAllTextAsync(Path.Combine(outputFolder, $"{hubClientName}ContextHook.tsx"), contextHookFile);
 }
 
 

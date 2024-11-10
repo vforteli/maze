@@ -16,10 +16,10 @@ import {
 import { CardStackMemoized } from "./cards/CardStack";
 import { MovableTileMemoized } from "./tiles/MovableTile";
 import { Edge } from "./Edge";
-import { useMazeHub } from "../mazehub/useMazeHub";
+import { useMazeHubClient } from "../generated/hubs/MazeHubClientContextHook";
 
 const Board = () => {
-  const mazeHub = useMazeHub();
+  const mazeHub = useMazeHubClient();
   const [game, setGameState] = useState(setupGame(4));
   const [moveIndex, setMoveIndex] = useState<number | undefined>(undefined);
   const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);

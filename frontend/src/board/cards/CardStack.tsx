@@ -2,10 +2,10 @@ import React, { useCallback, useEffect } from "react";
 import { CardMemoized } from "./Card";
 import "./CardStack.scss";
 import { Thing } from "../tiles/Tiles";
-import { useMazeHub } from "../../mazehub/useMazeHub";
+import { useMazeHubClient } from "../../generated/hubs/MazeHubClientContextHook";
 
 const CardStack = ({ cards }: { cards: Thing[] }) => {
-  const mazeHub = useMazeHub();
+  const mazeHub = useMazeHubClient();
 
   const handleSomethingHappened = useCallback((message: string | null) => {
     console.debug("cardstack: " + message);

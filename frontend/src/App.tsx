@@ -1,7 +1,7 @@
 import { HttpTransportType, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import "./App.css";
 import { BoardMemoized } from "./board/Board";
-import { MazeHubContextProvider } from "./mazehub/MazeHubContext";
+import { MazeHubClientContextProvider } from "./generated/hubs/MazeHubClientContext";
 
 function App() {
   const hubConnection = new HubConnectionBuilder()
@@ -11,13 +11,13 @@ function App() {
     .build();
 
   return (
-    <MazeHubContextProvider hubConnection={hubConnection}>
+    <MazeHubClientContextProvider hubConnection={hubConnection}>
       <div className="container">
         <div className="wrapper">
           <BoardMemoized />
         </div>
       </div>
-    </MazeHubContextProvider>
+    </MazeHubClientContextProvider>
   );
 }
 

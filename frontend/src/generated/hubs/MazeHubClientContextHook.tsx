@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { MazeHubContext } from "./MazeHubContext";
+import { MazeHubClientContext } from "./MazeHubClientContext";
 
-export const useMazeHub = () => {
-  const context = useContext(MazeHubContext);
+export const useMazeHubClient = () => {
+  const context = useContext(MazeHubClientContext);
 
   if (context === undefined) {
     throw Error("Context undefined? Forgot a provider somewhere?");
