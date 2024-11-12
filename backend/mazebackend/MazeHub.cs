@@ -16,6 +16,8 @@ public record DoStuffObjectModel
     public required int? SomeNullableInt { get; init; }
     public required DateTime SomeDateTime { get; init; }
     public required DateTime? SomeNullableDateTime { get; init; }
+    public required Dictionary<string, SendMessageModel> SomeDictionary { get; init; }
+    public required Dictionary<DoStuffEnum, SendMessageModel> SomeEnumDictionary { get; init; }
 }
 
 public enum DoStuffEnum
